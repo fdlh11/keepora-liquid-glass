@@ -1,4 +1,3 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -45,11 +44,11 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton>
       duration: const Duration(milliseconds: 110),
       reverseDuration: const Duration(milliseconds: 240),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.93).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.94).animate(
       CurvedAnimation(
         parent: _pressController,
         curve: Curves.easeOutCubic,
-        reverseCurve: Curves.elasticOut,
+        reverseCurve: Curves.easeOutBack,
       ),
     );
   }
@@ -86,20 +85,20 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton>
     final Color effectiveTint =
         widget.tintColor ?? (isDark ? Colors.white : const Color(0xFF004AAD));
 
-    // Gradien kaca bening penuh satu kesatuan (tanpa layer kapsul dalam)
+    // Gradien kaca bening dengan kontras tinggi tanpa BackdropFilter per-frame
     final List<Color> glassGradientColors = widget.tintColor != null
         ? [
-            widget.tintColor!.withValues(alpha: isDark ? 0.30 : 0.22),
-            widget.tintColor!.withValues(alpha: isDark ? 0.14 : 0.10),
+            widget.tintColor!.withValues(alpha: isDark ? 0.36 : 0.24),
+            widget.tintColor!.withValues(alpha: isDark ? 0.18 : 0.12),
           ]
         : isDark
             ? [
-                Colors.white.withValues(alpha: 0.18),
-                Colors.white.withValues(alpha: 0.06),
+                Colors.white.withValues(alpha: 0.20),
+                Colors.white.withValues(alpha: 0.08),
               ]
             : [
-                Colors.white.withValues(alpha: 0.78),
-                const Color(0xFFE0ECFF).withValues(alpha: 0.55),
+                Colors.white.withValues(alpha: 0.88),
+                const Color(0xFFE0ECFF).withValues(alpha: 0.68),
               ];
 
     final Color contentColor = isDisabled
@@ -107,83 +106,76 @@ class _LiquidGlassButtonState extends State<LiquidGlassButton>
         : (widget.foregroundColor ??
             (isDark ? Colors.white : const Color(0xFF004AAD)));
 
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
-      },
-      child: GestureDetector(
-        onTapDown: _onTapDown,
-        onTapUp: _onTapUp,
-        onTapCancel: _onTapCancel,
-        onTap: isDisabled
-            ? null
-            : () {
-                HapticFeedback.lightImpact();
-                widget.onPressed?.call();
-              },
-        child: Container(
-          width: widget.width,
-          height: widget.height,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.38 : 0.14),
-                blurRadius: 18,
-                spreadRadius: -1,
-                offset: const Offset(0, 7),
-              ),
-              BoxShadow(
-                color: effectiveTint.withValues(alpha: isDark ? 0.08 : 0.16),
-                blurRadius: 12,
-                offset: const Offset(0, 3),
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(widget.borderRadius),
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: widget.blurSigma,
-                sigmaY: widget.blurSigma,
-              ),
-              child: CustomPaint(
-                foregroundPainter: _ClearLiquidBorderPainter(
-                  borderRadius: widget.borderRadius,
-                  isDark: isDark,
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _scaleAnimation,
+        builder: (context, child) {
+          return Transform.scale(
+            scale: _scaleAnimation.value,
+            child: child,
+          );
+        },
+        child: GestureDetector(
+          onTapDown: _onTapDown,
+          onTapUp: _onTapUp,
+          onTapCancel: _onTapCancel,
+          onTap: isDisabled
+              ? null
+              : () {
+                  HapticFeedback.lightImpact();
+                  widget.onPressed?.call();
+                },
+          child: Container(
+            width: widget.width,
+            height: widget.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(widget.borderRadius),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: isDark ? 0.34 : 0.12),
+                  blurRadius: 14,
+                  spreadRadius: -1,
+                  offset: const Offset(0, 5),
                 ),
-                child: Container(
-                  padding: widget.padding,
-                  alignment: widget.width != null ? Alignment.center : null,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(widget.borderRadius),
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: glassGradientColors,
-                    ),
+                BoxShadow(
+                  color: effectiveTint.withValues(alpha: isDark ? 0.08 : 0.14),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: CustomPaint(
+              foregroundPainter: _ClearLiquidBorderPainter(
+                borderRadius: widget.borderRadius,
+                isDark: isDark,
+              ),
+              child: Container(
+                padding: widget.padding,
+                alignment: widget.width != null ? Alignment.center : null,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(widget.borderRadius),
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: glassGradientColors,
                   ),
-                  child: widget.isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: contentColor,
-                            strokeWidth: 2.4,
-                          ),
-                        )
-                      : DefaultTextStyle.merge(
-                          style: TextStyle(color: contentColor),
-                          child: IconTheme.merge(
-                            data: IconThemeData(color: contentColor),
-                            child: widget.child,
-                          ),
-                        ),
                 ),
+                child: widget.isLoading
+                    ? SizedBox(
+                        width: 20,
+                        height: 20,
+                        child: CircularProgressIndicator(
+                          color: contentColor,
+                          strokeWidth: 2.4,
+                        ),
+                      )
+                    : DefaultTextStyle.merge(
+                        style: TextStyle(color: contentColor),
+                        child: IconTheme.merge(
+                          data: IconThemeData(color: contentColor),
+                          child: widget.child,
+                        ),
+                      ),
               ),
             ),
           ),
@@ -210,7 +202,6 @@ class _ClearLiquidBorderPainter extends CustomPainter {
       Radius.circular(borderRadius),
     );
 
-    // Di mode terang beri outline biru-slate tipis supaya tombol kaca tidak menyatu dengan background
     if (!isDark) {
       final baseOutlinePaint = Paint()
         ..style = PaintingStyle.stroke
@@ -219,7 +210,6 @@ class _ClearLiquidBorderPainter extends CustomPainter {
       canvas.drawRRect(rrect, baseOutlinePaint);
     }
 
-    // Kilau cahaya specular di sudut atas & bawah kaca
     final specularPaint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.4

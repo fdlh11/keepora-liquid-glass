@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/auth_service.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import '../utils/top_notif.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -96,204 +98,220 @@ class _LoginScreenState extends State<LoginScreen> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    const primaryBlue = Color(0xFF0056C6);
+    const primaryBlue = Color(0xFF004AAD);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isKeyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary =
+        isDark ? Colors.white.withValues(alpha: 0.76) : const Color(0xFF334155);
+    final textMuted =
+        isDark ? Colors.white.withValues(alpha: 0.5) : const Color(0xFF64748B);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
 
     return Scaffold(
-      backgroundColor: primaryBlue,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: EdgeInsets.fromLTRB(
-            24.0,
-            16.0,
-            24.0,
-            isKeyboardOpen ? 100.0 : 32.0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              Center(
-                child: Image.asset(
-                  'assets/image/logo.png',
-                  width: 200,
-                  height: 200,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              const SizedBox(height: 32),
-              Text(
-                'Selamat Datang',
-                style: GoogleFonts.montserrat(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                'Silakan masuk untuk mengelola barang pribadi Anda',
-                style: TextStyle(fontSize: 13, color: Colors.white70),
-              ),
-              const SizedBox(height: 28),
-
-              // card email
-              const Text(
-                'Email',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _emailController,
-                focusNode: _emailFocus,
-                keyboardType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.next,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Masukkan Email Anda...',
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 13,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.12),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white38),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-
-              // Card password
-              const Text(
-                'Password',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14,
-                ),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _passwordController,
-                focusNode: _passwordFocus,
-                obscureText: _obscurePassword,
-                textInputAction: TextInputAction.done,
-                onSubmitted: (_) => _handleLogin(),
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  hintText: 'Masukkan Password Anda...',
-                  hintStyle: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 13,
-                  ),
-                  filled: true,
-                  fillColor: Colors.white.withValues(alpha: 0.12),
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_off_outlined
-                          : Icons.visibility_outlined,
-                      color: Colors.white70,
+      backgroundColor: Colors.transparent,
+      body: LiquidGlassBackground(
+        child: SafeArea(
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: EdgeInsets.fromLTRB(
+              22.0,
+              16.0,
+              22.0,
+              isKeyboardOpen ? 100.0 : 32.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 14),
+                Center(
+                  child: LiquidGlassSurface(
+                    borderRadius: 36,
+                    blurSigma: 18,
+                    tintColor: primaryBlue,
+                    padding: const EdgeInsets.all(20),
+                    child: Image.asset(
+                      'assets/image/logo.png',
+                      width: 145,
+                      height: 145,
+                      fit: BoxFit.contain,
                     ),
-                    onPressed: () {
-                      setState(() {
-                        _obscurePassword = !_obscurePassword;
-                      });
-                    },
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white38),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Colors.white),
                   ),
                 ),
-              ),
-              Align(
-                alignment: Alignment.centerRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/LupaPassword');
-                  },
-                  child: const Text(
-                    'Lupa Password?',
-                    style: TextStyle(color: Colors.white70, fontSize: 12),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleLogin,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white,
-                    foregroundColor: primaryBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: _isLoading
-                      ? const CircularProgressIndicator(color: primaryBlue)
-                      : const Text(
+                const SizedBox(height: 24),
+                LiquidGlassSurface(
+                  borderRadius: 26,
+                  blurSigma: 20,
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 22),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Selamat Datang',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: textPrimary,
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Text(
+                        'Silakan masuk untuk mengelola barang pribadi Anda',
+                        style: TextStyle(fontSize: 13, color: textSecondary),
+                      ),
+                      const SizedBox(height: 24),
+
+                      // Email
+                      Text(
+                        'Email',
+                        style: TextStyle(
+                          color: textPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      LiquidGlassSurface(
+                        borderRadius: 14,
+                        blurSigma: 10,
+                        enableShadow: false,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: TextField(
+                          controller: _emailController,
+                          focusNode: _emailFocus,
+                          keyboardType: TextInputType.emailAddress,
+                          textInputAction: TextInputAction.next,
+                          style: TextStyle(color: textPrimary, fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan Email Anda...',
+                            hintStyle: TextStyle(
+                              color: textMuted,
+                              fontSize: 13,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+
+                      // Password
+                      Text(
+                        'Password',
+                        style: TextStyle(
+                          color: textPrimary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      LiquidGlassSurface(
+                        borderRadius: 14,
+                        blurSigma: 10,
+                        enableShadow: false,
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: TextField(
+                          controller: _passwordController,
+                          focusNode: _passwordFocus,
+                          obscureText: _obscurePassword,
+                          textInputAction: TextInputAction.done,
+                          onSubmitted: (_) => _handleLogin(),
+                          style: TextStyle(color: textPrimary, fontSize: 14),
+                          decoration: InputDecoration(
+                            hintText: 'Masukkan Password Anda...',
+                            hintStyle: TextStyle(
+                              color: textMuted,
+                              fontSize: 13,
+                            ),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 14,
+                            ),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _obscurePassword
+                                    ? Icons.visibility_off_outlined
+                                    : Icons.visibility_outlined,
+                                color: textSecondary,
+                                size: 20,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, '/LupaPassword');
+                          },
+                          child: Text(
+                            'Lupa Password?',
+                            style: TextStyle(
+                              color: accentBlue,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      LiquidGlassButton(
+                        width: double.infinity,
+                        height: 52,
+                        borderRadius: 16,
+                        tintColor: primaryBlue,
+                        foregroundColor: isDark ? Colors.white : primaryBlue,
+                        isLoading: _isLoading,
+                        onPressed: _handleLogin,
+                        child: Text(
                           'Masuk',
-                          style: TextStyle(
+                          style: GoogleFonts.montserrat(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16),
-              Center(
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/register');
-                  },
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 4),
-                    child: Text.rich(
-                      TextSpan(
-                        text: 'Belum Punya Akun? ',
-                        style: TextStyle(color: Colors.white70, fontSize: 12.5),
-                        children: [
-                          TextSpan(
-                            text: 'Register!',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
+                const SizedBox(height: 18),
+                Center(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/register');
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 4),
+                      child: Text.rich(
+                        TextSpan(
+                          text: 'Belum Punya Akun? ',
+                          style: TextStyle(color: textSecondary, fontSize: 13),
+                          children: [
+                            TextSpan(
+                              text: 'Register!',
+                              style: TextStyle(
+                                color: accentBlue,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

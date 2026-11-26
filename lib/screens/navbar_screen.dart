@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../utils/liquid_glass_kit.dart';
 import 'akun_screen.dart';
 import 'home_screen.dart';
 import 'jadwal_screen.dart';
@@ -33,12 +34,6 @@ class _NavbarScreenState extends State<NavbarScreen> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final navBgColor =
-        isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8FAFC);
-    final navBorderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFC7D2FE);
 
     final List<Widget> pages = [
       HomeScreen(
@@ -50,7 +45,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
     ];
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
       resizeToAvoidBottomInset: false,
       extendBody: true,
       body: IndexedStack(
@@ -59,23 +54,10 @@ class _NavbarScreenState extends State<NavbarScreen> {
       ),
       bottomNavigationBar: SafeArea(
         minimum: const EdgeInsets.fromLTRB(16, 0, 16, 14),
-        child: Container(
+        child: LiquidGlassSurface(
           height: 68,
-          decoration: BoxDecoration(
-            color: navBgColor,
-            borderRadius: BorderRadius.circular(36),
-            border: Border.all(
-              color: navBorderColor,
-              width: 1.4,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: isDark ? 0.35 : 0.05),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+          borderRadius: 36,
+          blurSigma: 22,
           child: Row(
             children: [
               _buildNavItem(
@@ -118,31 +100,43 @@ class _NavbarScreenState extends State<NavbarScreen> {
     final activeColor =
         isDark ? const Color(0xFF60A5FA) : const Color(0xFF004AAD);
     final inactiveColor =
-        isDark ? Colors.grey.shade400 : const Color(0xFF737373);
+        isDark ? Colors.grey.shade400 : const Color(0xFF6B7280);
     final bool isSelected = _currentIndex == index;
 
     return Expanded(
       child: InkWell(
         onTap: () => _switchTab(index),
         borderRadius: BorderRadius.circular(36),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 25,
-              color: isSelected ? activeColor : inactiveColor,
-            ),
-            const SizedBox(height: 3),
-            Text(
-              label,
-              style: GoogleFonts.montserrat(
-                fontSize: 11.5,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? (isDark
+                    ? const Color(0xFF60A5FA).withValues(alpha: 0.16)
+                    : const Color(0xFF004AAD).withValues(alpha: 0.10))
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(28),
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                icon,
+                size: 24,
                 color: isSelected ? activeColor : inactiveColor,
               ),
-            ),
-          ],
+              const SizedBox(height: 2),
+              Text(
+                label,
+                style: GoogleFonts.montserrat(
+                  fontSize: 11,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                  color: isSelected ? activeColor : inactiveColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

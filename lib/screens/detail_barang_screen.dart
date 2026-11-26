@@ -9,6 +9,8 @@ import 'package:image_picker/image_picker.dart';
 
 import '../services/asset_service.dart';
 import '../utils/custom_app_dropdown.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import '../utils/top_notif.dart';
 
 class DetailBarangScreen extends StatefulWidget {
@@ -189,9 +191,6 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const primaryBlue = Color(0xFF004AAD);
     final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
-    final menuBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final menuBorder =
-        isDark ? Colors.grey.shade800 : const Color(0xFFE2E8F0);
     final textPrimary = isDark ? Colors.white : Colors.black87;
     const double menuWidth = 190;
 
@@ -216,25 +215,12 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                   child: ScaleTransition(
                     scale: _catScaleAnim,
                     alignment: Alignment.topRight,
-                    child: Container(
+                    child: LiquidGlassSurface(
                       width: menuWidth,
-                      constraints: const BoxConstraints(maxHeight: 205),
-                      decoration: BoxDecoration(
-                        color: menuBg,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: menuBorder),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withValues(
-                              alpha: isDark ? 0.45 : 0.12,
-                            ),
-                            blurRadius: 14,
-                            offset: const Offset(0, 6),
-                          ),
-                        ],
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
+                      borderRadius: 16,
+                      blurSigma: 20,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(maxHeight: 205),
                         child: ListView.separated(
                           padding: const EdgeInsets.symmetric(vertical: 4),
                           shrinkWrap: true,
@@ -243,8 +229,8 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                             height: 1,
                             thickness: 0.5,
                             color: isDark
-                                ? Colors.grey.shade800
-                                : Colors.grey.shade200,
+                                ? Colors.white.withValues(alpha: 0.12)
+                                : Colors.black.withValues(alpha: 0.08),
                           ),
                           itemBuilder: (context, index) {
                             final cat = categoryOptions[index];
@@ -262,7 +248,7 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                                 ),
                                 color: isSelected
                                     ? primaryBlue.withValues(
-                                        alpha: isDark ? 0.22 : 0.08,
+                                        alpha: isDark ? 0.25 : 0.10,
                                       )
                                     : Colors.transparent,
                                 child: Row(
@@ -396,15 +382,15 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                 Positioned(
                   top: 12,
                   right: 14,
-                  child: IconButton(
-                    onPressed: () => Navigator.pop(dialogContext),
-                    style: IconButton.styleFrom(
-                      backgroundColor: Colors.white.withValues(alpha: 0.16),
-                    ),
-                    icon: const Icon(
+                  child: LiquidGlassSurface(
+                    borderRadius: 30,
+                    blurSigma: 16,
+                    padding: const EdgeInsets.all(8),
+                    onTap: () => Navigator.pop(dialogContext),
+                    child: const Icon(
                       Icons.close_rounded,
                       color: Colors.white,
-                      size: 24,
+                      size: 22,
                     ),
                   ),
                 ),
@@ -436,7 +422,6 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final sheetBg = isDark ? theme.colorScheme.surface : Colors.white;
     final textPrimary = theme.colorScheme.onSurface;
     final textSecondary =
         isDark ? Colors.grey.shade400 : Colors.grey.shade600;
@@ -451,36 +436,73 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: sheetBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: LiquidGlassSurface(
+            borderRadius: 24,
+            blurSigma: 22,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
+                    decoration: BoxDecoration(
+                      color:
+                          isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
-                ),
-                Text(
-                  'Foto Barang',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
+                  Text(
+                    'Foto Barang',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                if (hasPhoto) ...[
+                  const SizedBox(height: 16),
+                  if (hasPhoto) ...[
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: iconBg,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.visibility_outlined,
+                          color: iconColor,
+                        ),
+                      ),
+                      title: Text(
+                        'Lihat Foto',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: textPrimary,
+                        ),
+                      ),
+                      subtitle: Text(
+                        'Tampilkan preview foto barang ukuran penuh',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: textSecondary,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        _showPhotoPreviewDialog(currentPhotoUrl);
+                      },
+                    ),
+                    const SizedBox(height: 6),
+                  ],
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(10),
@@ -489,12 +511,12 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.visibility_outlined,
+                        Icons.camera_alt_outlined,
                         color: iconColor,
                       ),
                     ),
                     title: Text(
-                      'Lihat Foto',
+                      'Ganti Foto dari Kamera',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -502,7 +524,7 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                       ),
                     ),
                     subtitle: Text(
-                      'Tampilkan preview foto barang ukuran penuh',
+                      'Ambil foto baru menggunakan kamera perangkat',
                       style: TextStyle(
                         fontSize: 12,
                         color: textSecondary,
@@ -510,107 +532,74 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                     ),
                     onTap: () {
                       Navigator.pop(sheetContext);
-                      _showPhotoPreviewDialog(currentPhotoUrl);
+                      _pickNewImage(ImageSource.camera);
                     },
                   ),
-                  const SizedBox(height: 6),
-                ],
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      color: iconColor,
-                    ),
-                  ),
-                  title: Text(
-                    'Ganti Foto dari Kamera',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: textPrimary,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Ambil foto baru menggunakan kamera perangkat',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: textSecondary,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickNewImage(ImageSource.camera);
-                  },
-                ),
-                const SizedBox(height: 6),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.photo_library_outlined,
-                      color: iconColor,
-                    ),
-                  ),
-                  title: Text(
-                    'Ganti Foto dari Galeri',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: textPrimary,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Pilih foto barang lain yang tersimpan di HP',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: textSecondary,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickNewImage(ImageSource.gallery);
-                  },
-                ),
-                if (_newSelectedImage != null) ...[
                   const SizedBox(height: 6),
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.red.withValues(alpha: 0.2)
-                            : Colors.red.shade50,
+                        color: iconBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.undo_rounded,
-                        color: Colors.red.shade400,
+                        Icons.photo_library_outlined,
+                        color: iconColor,
                       ),
                     ),
                     title: Text(
-                      'Batalkan Foto Baru',
+                      'Ganti Foto dari Galeri',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: Colors.red.shade400,
+                        color: textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Pilih foto barang lain yang tersimpan di HP',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: textSecondary,
                       ),
                     ),
                     onTap: () {
                       Navigator.pop(sheetContext);
-                      setState(() => _newSelectedImage = null);
+                      _pickNewImage(ImageSource.gallery);
                     },
                   ),
+                  if (_newSelectedImage != null) ...[
+                    const SizedBox(height: 6),
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.red.withValues(alpha: 0.2)
+                              : Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.undo_rounded,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      title: Text(
+                        'Batalkan Foto Baru',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        setState(() => _newSelectedImage = null);
+                      },
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );
@@ -745,58 +734,76 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    final bool? shouldLeave = await showDialog<bool>(
+    final bool? shouldLeave = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Perubahan Belum Disimpan',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Perubahan Belum Disimpan',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
+                  Text(
+                    'Perubahan Belum Disimpan',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFF004AAD),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Lanjutkan Edit',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Lanjutkan Edit',
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Keluar',
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -806,42 +813,11 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Keluar',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -855,100 +831,90 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
   Future<void> _confirmDeleteAsset() async {
     _removeCategoryOverlayImmediate();
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool? confirmed = await showDialog<bool>(
+    final bool? confirmed = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Hapus Barang',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Apakah Anda ingin menghapus barang ini dari daftar? Semua riwayat perawatan juga akan terhapus.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Hapus Barang',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Ya, Hapus',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                  Text(
+                    'Hapus Barang',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: OutlinedButton.styleFrom(
+                  const SizedBox(height: 12),
+                  Text(
+                    'Apakah Anda ingin menghapus barang ini dari daftar? Semua riwayat perawatan juga akan terhapus.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFFDC2626),
                           foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
+                              ? const Color(0xFFFCA5A5)
+                              : const Color(0xFFDC2626),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Batal',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                          child: const Text(
+                            'Ya, Hapus',
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Batal',
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -1057,17 +1023,11 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
     required String value,
     required bool isDark,
   }) {
-    return Container(
+    return LiquidGlassSurface(
       width: double.infinity,
+      borderRadius: 14,
+      blurSigma: 14,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.grey.shade800 : const Color(0xFFE2E8F0),
-          width: 1,
-        ),
-      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1092,13 +1052,11 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
     );
   }
 
-  InputDecoration _editableBoxDecoration(
+  InputDecoration _glassInputDecoration(
     String hint,
     bool isDark, {
     String? prefixText,
   }) {
-    final borderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFE2E8F0);
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
@@ -1108,21 +1066,10 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
         fontWeight: FontWeight.bold,
         color: isDark ? Colors.white : Colors.black87,
       ),
-      filled: true,
-      fillColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF004AAD), width: 1.4),
-      ),
     );
   }
 
@@ -1164,12 +1111,8 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFE2E8F0);
     final textPrimary = isDark ? Colors.white : Colors.black;
+    final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
 
     return StreamBuilder<QuerySnapshot>(
       stream: _assetsStream,
@@ -1183,17 +1126,21 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
 
         if (_cachedAssetData == null) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Scaffold(
-              backgroundColor: bgColor,
-              body: const Center(
-                child: CircularProgressIndicator(color: primaryBlue),
+            return const LiquidGlassBackground(
+              child: Scaffold(
+                backgroundColor: Colors.transparent,
+                body: Center(
+                  child: CircularProgressIndicator(color: primaryBlue),
+                ),
               ),
             );
           }
-          return Scaffold(
-            backgroundColor: bgColor,
-            appBar: AppBar(backgroundColor: bgColor),
-            body: const Center(child: Text('Data barang tidak ditemukan.')),
+          return LiquidGlassBackground(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(backgroundColor: Colors.transparent),
+              body: const Center(child: Text('Data barang tidak ditemukan.')),
+            ),
           );
         }
 
@@ -1248,209 +1195,199 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
             if (didPop) return;
             await _handleBackPress();
           },
-          child: Scaffold(
-            backgroundColor: bgColor,
-            appBar: AppBar(
-              backgroundColor: bgColor,
-              elevation: 0,
-              scrolledUnderElevation: 0,
-              centerTitle: true,
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back, color: textPrimary),
-                onPressed: _isSaving ? null : _handleBackPress,
-              ),
-              title: Text(
-                'Detail Barang',
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: textPrimary,
+          child: LiquidGlassBackground(
+            child: Scaffold(
+              backgroundColor: Colors.transparent,
+              appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                scrolledUnderElevation: 0,
+                centerTitle: true,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: textPrimary),
+                  onPressed: _isSaving ? null : _handleBackPress,
                 ),
-              ),
-              actions: [
-                IconButton(
-                  tooltip: 'Hapus Barang',
-                  icon: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.red,
-                    size: 24,
+                title: Text(
+                  'Detail Barang',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: textPrimary,
                   ),
-                  onPressed: _isSaving ? null : _confirmDeleteAsset,
                 ),
-              ],
-            ),
-            body: SingleChildScrollView(
-              padding: const EdgeInsets.only(bottom: 32),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: () => _showPhotoActionSheet(photoUrl),
-                    child: Container(
-                      width: double.infinity,
-                      height: 205,
-                      color: isDark
-                          ? const Color(0xFF1E1E1E)
-                          : const Color(0xFFE5E7EB),
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          _buildAssetPhoto(photoUrl, isDark),
-                          if (_newSelectedImage != null ||
-                              photoUrl.trim().isNotEmpty)
-                            Positioned(
-                              right: 12,
-                              bottom: 12,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 11,
-                                  vertical: 6,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.black.withValues(alpha: 0.62),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: const Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Icon(
-                                      Icons.photo_camera_outlined,
-                                      size: 14,
-                                      color: Colors.white,
-                                    ),
-                                    SizedBox(width: 5),
-                                    Text(
-                                      'Lihat / Ganti Foto',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
+                actions: [
+                  IconButton(
+                    tooltip: 'Hapus Barang',
+                    icon: const Icon(
+                      Icons.delete_outline_rounded,
+                      color: Colors.red,
+                      size: 24,
                     ),
+                    onPressed: _isSaving ? null : _confirmDeleteAsset,
                   ),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
+                ],
+              ),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.only(bottom: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      child: LiquidGlassSurface(
+                        width: double.infinity,
+                        height: 205,
+                        borderRadius: 20,
+                        blurSigma: 14,
+                        onTap: () => _showPhotoActionSheet(photoUrl),
+                        child: Stack(
+                          fit: StackFit.expand,
                           children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _nameController,
-                                focusNode: _nameFocusNode,
-                                enabled: !_isSaving,
-                                maxLines: null,
-                                textInputAction: TextInputAction.done,
-                                onSubmitted: (_) => _nameFocusNode.unfocus(),
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 18.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: textPrimary,
-                                ),
-                                decoration: const InputDecoration(
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  border: InputBorder.none,
-                                  enabledBorder: InputBorder.none,
-                                  focusedBorder: InputBorder.none,
-                                  disabledBorder: InputBorder.none,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            CompositedTransformTarget(
-                              link: _categoryLayerLink,
-                              child: GestureDetector(
-                                key: _categoryChipKey,
-                                behavior: HitTestBehavior.opaque,
-                                onTap: () =>
-                                    _toggleCategoryMenu(categoryOptions),
-                                child: Container(
+                            _buildAssetPhoto(photoUrl, isDark),
+                            if (_newSelectedImage != null ||
+                                photoUrl.trim().isNotEmpty)
+                              Positioned(
+                                right: 12,
+                                bottom: 12,
+                                child: LiquidGlassSurface(
+                                  borderRadius: 20,
+                                  blurSigma: 14,
+                                  tintColor: Colors.black,
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 14,
-                                    vertical: 5,
+                                    horizontal: 11,
+                                    vertical: 6,
                                   ),
-                                  decoration: BoxDecoration(
-                                    color: isDark
-                                        ? const Color(0xFF172554)
-                                        : const Color(0xFFDBEAFE),
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                      color: _isCategoryMenuOpen
-                                          ? primaryBlue
-                                          : (isDark
-                                              ? const Color(0xFF1D4ED8)
-                                              : const Color(0xFF93C5FD)),
-                                      width: _isCategoryMenuOpen ? 1.4 : 1.0,
-                                    ),
-                                  ),
-                                  child: Text(
-                                    _selectedCategory,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: isDark
-                                          ? const Color(0xFF60A5FA)
-                                          : primaryBlue,
-                                    ),
+                                  child: const Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.photo_camera_outlined,
+                                        size: 14,
+                                        color: Colors.white,
+                                      ),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        'Lihat / Ganti Foto',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
-                        const SizedBox(height: 18),
-                        Text(
-                          'Informasi Pembelian',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    purchaseType == 'Second'
-                                        ? 'Tanggal Pembelian (Second)'
-                                        : 'Tanggal Pembelian',
-                                    style: TextStyle(
-                                      fontSize: 11.5,
-                                      color: isDark
-                                          ? Colors.grey.shade400
-                                          : Colors.grey.shade600,
-                                    ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: _nameController,
+                                  focusNode: _nameFocusNode,
+                                  enabled: !_isSaving,
+                                  maxLines: null,
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (_) => _nameFocusNode.unfocus(),
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 18.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
                                   ),
-                                  const SizedBox(height: 6),
-                                  InkWell(
-                                    onTap:
-                                        _isSaving ? null : _pickPurchaseDate,
-                                    borderRadius: BorderRadius.circular(12),
-                                    child: Container(
+                                  decoration: const InputDecoration(
+                                    isDense: true,
+                                    contentPadding: EdgeInsets.zero,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    disabledBorder: InputBorder.none,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              CompositedTransformTarget(
+                                link: _categoryLayerLink,
+                                child: LiquidGlassSurface(
+                                  key: _categoryChipKey,
+                                  borderRadius: 20,
+                                  blurSigma: 14,
+                                  tintColor: primaryBlue,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 6,
+                                  ),
+                                  onTap: () =>
+                                      _toggleCategoryMenu(categoryOptions),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        _selectedCategory,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          color: accentBlue,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Icon(
+                                        Icons.keyboard_arrow_down_rounded,
+                                        size: 16,
+                                        color: accentBlue,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Informasi Pembelian',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      purchaseType == 'Second'
+                                          ? 'Tanggal Pembelian (Second)'
+                                          : 'Tanggal Pembelian',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        color: isDark
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 6),
+                                    LiquidGlassSurface(
                                       height: 48,
+                                      borderRadius: 14,
+                                      blurSigma: 14,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 12,
                                       ),
-                                      decoration: BoxDecoration(
-                                        color: surfaceColor,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(color: borderColor),
-                                      ),
+                                      onTap:
+                                          _isSaving ? null : _pickPurchaseDate,
                                       child: Row(
                                         children: [
                                           Expanded(
@@ -1479,194 +1416,193 @@ class _DetailBarangScreenState extends State<DetailBarangScreen>
                                         ],
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Harga Pembelian',
-                                    style: TextStyle(
-                                      fontSize: 11.5,
-                                      color: isDark
-                                          ? Colors.grey.shade400
-                                          : Colors.grey.shade600,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  SizedBox(
-                                    height: 48,
-                                    child: TextField(
-                                      controller: _purchasePriceController,
-                                      keyboardType: TextInputType.number,
-                                      inputFormatters: [
-                                        FilteringTextInputFormatter.digitsOnly,
-                                        _RibuanFormatter(),
-                                      ],
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'Harga Pembelian',
                                       style: TextStyle(
-                                        fontSize: 13.5,
-                                        fontWeight: FontWeight.bold,
+                                        fontSize: 11.5,
                                         color: isDark
-                                            ? Colors.white
-                                            : Colors.black87,
-                                      ),
-                                      decoration: _editableBoxDecoration(
-                                        '0',
-                                        isDark,
-                                        prefixText: 'Rp ',
+                                            ? Colors.grey.shade400
+                                            : Colors.grey.shade600,
                                       ),
                                     ),
-                                  ),
-                                ],
+                                    const SizedBox(height: 6),
+                                    LiquidGlassSurface(
+                                      height: 48,
+                                      borderRadius: 14,
+                                      blurSigma: 14,
+                                      child: TextField(
+                                        controller: _purchasePriceController,
+                                        keyboardType: TextInputType.number,
+                                        inputFormatters: [
+                                          FilteringTextInputFormatter
+                                              .digitsOnly,
+                                          _RibuanFormatter(),
+                                        ],
+                                        style: TextStyle(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.bold,
+                                          color: isDark
+                                              ? Colors.white
+                                              : Colors.black87,
+                                        ),
+                                        decoration: _glassInputDecoration(
+                                          '0',
+                                          isDark,
+                                          prefixText: 'Rp ',
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Kondisi Barang',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          LiquidGlassSurface(
+                            borderRadius: 14,
+                            blurSigma: 14,
+                            child: CustomAppDropdown(
+                              value: _selectedCondition,
+                              items: conditionDropdownOptions,
+                              hint: 'Pilih kondisi barang...',
+                              enabled: !_isSaving,
+                              fillColor: Colors.transparent,
+                              borderColor: Colors.transparent,
+                              textStyle: TextStyle(
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.bold,
+                                color: isDark ? Colors.white : Colors.black87,
+                              ),
+                              onChanged: (val) {
+                                setState(() => _selectedCondition = val);
+                              },
+                            ),
+                          ),
+                          const SizedBox(height: 18),
+                          Text(
+                            'Rincian Kondisi Barang',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          LiquidGlassSurface(
+                            borderRadius: 14,
+                            blurSigma: 14,
+                            child: TextField(
+                              controller: _conditionDetailController,
+                              maxLines: 3,
+                              minLines: 2,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                color: isDark ? Colors.white : Colors.black87,
+                                height: 1.35,
+                              ),
+                              decoration: _glassInputDecoration(
+                                _getConditionDetailHint(),
+                                isDark,
                               ),
                             ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          'Kondisi Barang',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        CustomAppDropdown(
-                          value: _selectedCondition,
-                          items: conditionDropdownOptions,
-                          hint: 'Pilih kondisi barang...',
-                          enabled: !_isSaving,
-                          fillColor: surfaceColor,
-                          borderColor: borderColor,
-                          textStyle: TextStyle(
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.bold,
-                            color: isDark ? Colors.white : Colors.black87,
+                          const SizedBox(height: 18),
+                          Text(
+                            'Catatan Perawatan Terakhir',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
                           ),
-                          onChanged: (val) {
-                            setState(() => _selectedCondition = val);
-                          },
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          'Rincian Kondisi Barang',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: _infoCard(
+                                  label: 'Tanggal Perawatan Terakhir',
+                                  value: lastMaintenance,
+                                  isDark: isDark,
+                                ),
+                              ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: _infoCard(
+                                  label: 'Biaya Perawatan Terakhir',
+                                  value: lastMaintenanceCost,
+                                  isDark: isDark,
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _conditionDetailController,
-                          maxLines: 3,
-                          minLines: 2,
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            color: isDark ? Colors.white : Colors.black87,
-                            height: 1.35,
+                          const SizedBox(height: 18),
+                          Text(
+                            'Rincian Perawatan',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
                           ),
-                          decoration: _editableBoxDecoration(
-                            _getConditionDetailHint(),
-                            isDark,
-                          ),
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          'Catatan Perawatan Terakhir',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _infoCard(
-                                label: 'Tanggal Perawatan Terakhir',
-                                value: lastMaintenance,
-                                isDark: isDark,
+                          const SizedBox(height: 8),
+                          LiquidGlassSurface(
+                            borderRadius: 14,
+                            blurSigma: 14,
+                            child: TextField(
+                              controller: _maintenanceDetailController,
+                              maxLines: 3,
+                              minLines: 2,
+                              style: TextStyle(
+                                fontSize: 13.5,
+                                color: isDark ? Colors.white : Colors.black87,
+                                height: 1.35,
+                              ),
+                              decoration: _glassInputDecoration(
+                                'Belum ada catatan perawatan.',
+                                isDark,
                               ),
                             ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: _infoCard(
-                                label: 'Biaya Perawatan Terakhir',
-                                value: lastMaintenanceCost,
-                                isDark: isDark,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 18),
-                        Text(
-                          'Rincian Perawatan',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: textPrimary,
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        TextField(
-                          controller: _maintenanceDetailController,
-                          maxLines: 3,
-                          minLines: 2,
-                          style: TextStyle(
-                            fontSize: 13.5,
-                            color: isDark ? Colors.white : Colors.black87,
-                            height: 1.35,
-                          ),
-                          decoration: _editableBoxDecoration(
-                            'Belum ada catatan perawatan.',
-                            isDark,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
+                          const SizedBox(height: 24),
+                          LiquidGlassButton(
+                            width: double.infinity,
+                            borderRadius: 16,
+                            tintColor: primaryBlue,
+                            isLoading: _isSaving,
                             onPressed: _isSaving
                                 ? null
                                 : () => _saveChanges(purchaseType),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryBlue,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(vertical: 15),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14),
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            child: Text(
+                              'Simpan Perubahan',
+                              style: GoogleFonts.montserrat(
+                                fontSize: 15,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
-                            child: _isSaving
-                                ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
-                                    child: CircularProgressIndicator(
-                                      color: Colors.white,
-                                      strokeWidth: 2.5,
-                                    ),
-                                  )
-                                : Text(
-                                    'Simpan Perubahan',
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

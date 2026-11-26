@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/jadwal_service.dart';
-import '../utils/top_notif.dart';
 import '../utils/custom_app_dropdown.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
+import '../utils/top_notif.dart';
 
 class DetailJadwalScreen extends StatefulWidget {
   final String scheduleId;
@@ -90,100 +92,90 @@ class _DetailJadwalScreenState extends State<DetailJadwalScreen> {
 
   Future<void> _konfirmasiHapus() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final confirm = await showDialog<bool>(
+    final confirm = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Hapus Jadwal',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Jadwal ini akan dihapus permanen. Apakah Anda yakin ingin melanjutkan?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Hapus Jadwal',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Ya, Hapus',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
+                  Text(
+                    'Hapus Jadwal',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
                     ),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: OutlinedButton.styleFrom(
+                  const SizedBox(height: 12),
+                  Text(
+                    'Jadwal ini akan dihapus permanen. Apakah Anda yakin ingin melanjutkan?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFFDC2626),
                           foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
+                              ? const Color(0xFFFCA5A5)
+                              : const Color(0xFFDC2626),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Batal',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                          child: const Text(
+                            'Ya, Hapus',
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Batal',
+                            maxLines: 1,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -235,140 +227,133 @@ class _DetailJadwalScreenState extends State<DetailJadwalScreen> {
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
     final textPrimary = isDark ? Colors.white : Colors.black87;
+    final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
 
     final Timestamp? ts = _currentData['scheduledAt'] as Timestamp?;
     final DateTime scheduledAt = ts?.toDate() ?? DateTime.now();
     final String notes = (_currentData['notes'] ?? '').toString();
     final num estimatedCost = (_currentData['estimatedCost'] as num?) ?? 0;
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      appBar: AppBar(
-        backgroundColor: bgColor,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: textPrimary),
-        ),
-        title: Text(
-          'Detail Jadwal',
-          style: GoogleFonts.montserrat(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: textPrimary,
+    return LiquidGlassBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          scrolledUnderElevation: 0,
+          centerTitle: true,
+          leading: IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: Icon(Icons.arrow_back, color: textPrimary),
           ),
-        ),
-        actions: [
-          IconButton(
-            onPressed: _isProcessing ? null : _bukaHalamanEdit,
-            icon: const Icon(Icons.edit_outlined, color: Color(0xFF004AAD)),
-            tooltip: 'Edit Jadwal',
-          ),
-          IconButton(
-            onPressed: _isProcessing ? null : _konfirmasiHapus,
-            icon: const Icon(Icons.delete_outline, color: Colors.red),
-            tooltip: 'Hapus Jadwal',
-          ),
-          const SizedBox(width: 4),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildLabel('Nama Jadwal', isDark),
-            const SizedBox(height: 6),
-            _buildReadOnlyBox((_currentData['title'] ?? '-').toString(), isDark),
-            const SizedBox(height: 16),
-            _buildLabel('Nama Barang', isDark),
-            const SizedBox(height: 6),
-            _buildReadOnlyBox(
-                (_currentData['assetName'] ?? '-').toString(), isDark),
-            const SizedBox(height: 16),
-            Row(
-              children: [
-                Expanded(
-                  flex: 6,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLabel('Tanggal Jadwal', isDark),
-                      const SizedBox(height: 6),
-                      _buildReadOnlyBox(_formatTanggal(scheduledAt), isDark),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  flex: 4,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildLabel('Jam Jadwal', isDark),
-                      const SizedBox(height: 6),
-                      _buildReadOnlyBox(_formatJam(scheduledAt), isDark),
-                    ],
-                  ),
-                ),
-              ],
+          title: Text(
+            'Detail Jadwal',
+            style: GoogleFonts.montserrat(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: textPrimary,
             ),
-            const SizedBox(height: 16),
-            _buildLabel('Jenis Perawatan', isDark),
-            const SizedBox(height: 6),
-            _buildReadOnlyBox(
-              (_currentData['maintenanceType'] ?? 'Perawatan').toString(),
-              isDark,
+          ),
+          actions: [
+            IconButton(
+              onPressed: _isProcessing ? null : _bukaHalamanEdit,
+              icon: Icon(Icons.edit_outlined, color: accentBlue),
+              tooltip: 'Edit Jadwal',
             ),
-            const SizedBox(height: 16),
-            _buildLabel('Estimasi Biaya Perawatan', isDark),
-            const SizedBox(height: 6),
-            _buildReadOnlyBox(_formatRupiah(estimatedCost), isDark),
-            const SizedBox(height: 16),
-            _buildLabel('Catatan Tambahan (Opsional)', isDark),
-            const SizedBox(height: 6),
-            _buildReadOnlyBox(notes.isEmpty ? '' : notes, isDark,
-                minHeight: 90),
+            IconButton(
+              onPressed: _isProcessing ? null : _konfirmasiHapus,
+              icon: const Icon(Icons.delete_outline, color: Colors.red),
+              tooltip: 'Hapus Jadwal',
+            ),
+            const SizedBox(width: 4),
           ],
         ),
-      ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
-          child: SizedBox(
-            width: double.infinity,
-            height: 52,
-            child: ElevatedButton(
-              onPressed: _isProcessing ? null : _selesaikanJadwalLangsung,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryBlue,
-                foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                elevation: 0,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLabel('Nama Jadwal', isDark),
+              const SizedBox(height: 6),
+              _buildReadOnlyBox(
+                (_currentData['title'] ?? '-').toString(),
+                isDark,
               ),
-              child: _isProcessing
-                  ? const SizedBox(
-                      width: 22,
-                      height: 22,
-                      child: CircularProgressIndicator(
-                        color: Colors.white,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : Text(
-                      'Tandai Selesai',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+              const SizedBox(height: 16),
+              _buildLabel('Nama Barang', isDark),
+              const SizedBox(height: 6),
+              _buildReadOnlyBox(
+                (_currentData['assetName'] ?? '-').toString(),
+                isDark,
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 6,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('Tanggal Jadwal', isDark),
+                        const SizedBox(height: 6),
+                        _buildReadOnlyBox(_formatTanggal(scheduledAt), isDark),
+                      ],
                     ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildLabel('Jam Jadwal', isDark),
+                        const SizedBox(height: 6),
+                        _buildReadOnlyBox(_formatJam(scheduledAt), isDark),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildLabel('Jenis Perawatan', isDark),
+              const SizedBox(height: 6),
+              _buildReadOnlyBox(
+                (_currentData['maintenanceType'] ?? 'Perawatan').toString(),
+                isDark,
+              ),
+              const SizedBox(height: 16),
+              _buildLabel('Estimasi Biaya Perawatan', isDark),
+              const SizedBox(height: 6),
+              _buildReadOnlyBox(_formatRupiah(estimatedCost), isDark),
+              const SizedBox(height: 16),
+              _buildLabel('Catatan Tambahan (Opsional)', isDark),
+              const SizedBox(height: 6),
+              _buildReadOnlyBox(
+                notes.isEmpty ? '-' : notes,
+                isDark,
+                minHeight: 90,
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 8, 20, 16),
+            child: LiquidGlassButton(
+              width: double.infinity,
+              height: 52,
+              borderRadius: 16,
+              tintColor: primaryBlue,
+              isLoading: _isProcessing,
+              onPressed: _isProcessing ? null : _selesaikanJadwalLangsung,
+              child: Text(
+                'Tandai Selesai',
+                style: GoogleFonts.montserrat(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
         ),
@@ -388,22 +373,22 @@ class _DetailJadwalScreenState extends State<DetailJadwalScreen> {
   }
 
   Widget _buildReadOnlyBox(String value, bool isDark, {double minHeight = 48}) {
-    return Container(
+    return LiquidGlassSurface(
       width: double.infinity,
-      constraints: BoxConstraints(minHeight: minHeight),
+      borderRadius: 14,
+      blurSigma: 14,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF3F4F6),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDark ? Colors.grey.shade800 : Colors.grey.shade400,
-        ),
-      ),
-      child: Text(
-        value,
-        style: TextStyle(
-          fontSize: 14,
-          color: isDark ? Colors.white70 : Colors.grey.shade700,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(minHeight: minHeight - 26),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              color: isDark ? Colors.white70 : Colors.grey.shade800,
+            ),
+          ),
         ),
       ),
     );
@@ -554,58 +539,76 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool? shouldLeave = await showDialog<bool>(
+    final bool? shouldLeave = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Perubahan Belum Disimpan',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Perubahan Belum Disimpan',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
+                  Text(
+                    'Perubahan Belum Disimpan',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFF004AAD),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Lanjutkan Edit',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Lanjutkan Edit',
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Keluar',
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -615,42 +618,11 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Keluar',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -801,16 +773,21 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
     super.dispose();
   }
 
+  InputDecoration _glassInputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13.5),
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final fieldBgColor =
-        isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF3F4F6);
-    final borderColor =
-        isDark ? Colors.grey.shade800 : Colors.grey.shade400;
     final textPrimary = isDark ? Colors.white : Colors.black87;
     final textSecondary =
         isDark ? Colors.grey.shade400 : Colors.grey.shade600;
@@ -821,107 +798,113 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
         if (didPop) return;
         await _handleBackPress();
       },
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: _isSaving ? null : _handleBackPress,
-            icon: Icon(Icons.arrow_back, color: textPrimary),
-          ),
-          title: Text(
-            'Edit Detail Jadwal',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
+      child: LiquidGlassBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: _isSaving ? null : _handleBackPress,
+              icon: Icon(Icons.arrow_back, color: textPrimary),
+            ),
+            title: Text(
+              'Edit Detail Jadwal',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textPrimary,
+              ),
             ),
           ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLabel('Nama Jadwal', isDark),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _namaJadwalController,
-                  style: TextStyle(fontSize: 14, color: textPrimary),
-                  decoration:
-                      _inputDecoration('Masukkan nama jadwal...', isDark),
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Nama Barang', isDark),
-                const SizedBox(height: 8),
-                StreamBuilder(
-                  stream: widget.jadwalService.streamDaftarBarang(),
-                  builder: (context, snapshot) {
-                    final docs = snapshot.data?.docs ?? [];
-                    final assetNames = docs.map((doc) {
-                      final data = doc.data() as Map<String, dynamic>?;
-                      return (data?['name'] ?? 'Tanpa Nama').toString();
-                    }).toList();
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLabel('Nama Jadwal', isDark),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _namaJadwalController,
+                      style: TextStyle(fontSize: 14, color: textPrimary),
+                      decoration:
+                          _glassInputDecoration('Masukkan nama jadwal...'),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Nama Barang', isDark),
+                  const SizedBox(height: 8),
+                  StreamBuilder(
+                    stream: widget.jadwalService.streamDaftarBarang(),
+                    builder: (context, snapshot) {
+                      final docs = snapshot.data?.docs ?? [];
+                      final assetNames = docs.map((doc) {
+                        final data = doc.data() as Map<String, dynamic>?;
+                        return (data?['name'] ?? 'Tanpa Nama').toString();
+                      }).toList();
 
-                    String? activeName;
-                    if (_selectedAssetId != null &&
-                        docs.any((d) => d.id == _selectedAssetId)) {
-                      final selectedDoc =
-                          docs.firstWhere((d) => d.id == _selectedAssetId);
-                      final selectedData =
-                          selectedDoc.data() as Map<String, dynamic>?;
-                      activeName = (selectedData?['name'] ?? '').toString();
-                    }
+                      String? activeName;
+                      if (_selectedAssetId != null &&
+                          docs.any((d) => d.id == _selectedAssetId)) {
+                        final selectedDoc =
+                            docs.firstWhere((d) => d.id == _selectedAssetId);
+                        final selectedData =
+                            selectedDoc.data() as Map<String, dynamic>?;
+                        activeName = (selectedData?['name'] ?? '').toString();
+                      }
 
-                    return CustomAppDropdown(
-                      value: activeName,
-                      items: assetNames,
-                      hint: _selectedAssetName?.isNotEmpty == true
-                          ? _selectedAssetName!
-                          : (docs.isEmpty
-                              ? 'Belum ada data barang'
-                              : 'Pilih nama barang'),
-                      enabled: !_isSaving && docs.isNotEmpty,
-                      fillColor: fieldBgColor,
-                      borderColor: borderColor,
-                      textStyle: TextStyle(fontSize: 14, color: textPrimary),
-                      onChanged: (selectedName) {
-                        final idx = assetNames.indexOf(selectedName);
-                        if (idx != -1) {
-                          setState(() {
-                            _selectedAssetId = docs[idx].id;
-                            _selectedAssetName = selectedName;
-                          });
-                        }
-                      },
-                    );
-                  },
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Tanggal Jadwal', isDark),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: _pilihTanggal,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
+                      return LiquidGlassSurface(
+                        borderRadius: 14,
+                        blurSigma: 14,
+                        child: CustomAppDropdown(
+                          value: activeName,
+                          items: assetNames,
+                          hint: _selectedAssetName?.isNotEmpty == true
+                              ? _selectedAssetName!
+                              : (docs.isEmpty
+                                  ? 'Belum ada data barang'
+                                  : 'Pilih nama barang'),
+                          enabled: !_isSaving && docs.isNotEmpty,
+                          fillColor: Colors.transparent,
+                          borderColor: Colors.transparent,
+                          textStyle:
+                              TextStyle(fontSize: 14, color: textPrimary),
+                          onChanged: (selectedName) {
+                            final idx = assetNames.indexOf(selectedName);
+                            if (idx != -1) {
+                              setState(() {
+                                _selectedAssetId = docs[idx].id;
+                                _selectedAssetName = selectedName;
+                              });
+                            }
+                          },
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 6,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabel('Tanggal Jadwal', isDark),
+                            const SizedBox(height: 8),
+                            LiquidGlassSurface(
                               height: 48,
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: fieldBgColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: borderColor),
-                              ),
+                              borderRadius: 14,
+                              blurSigma: 14,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              onTap: _pilihTanggal,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -942,29 +925,24 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Jam Jadwal', isDark),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: _pilihJam,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabel('Jam Jadwal', isDark),
+                            const SizedBox(height: 8),
+                            LiquidGlassSurface(
                               height: 48,
-                              padding: const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: fieldBgColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: borderColor),
-                              ),
+                              borderRadius: 14,
+                              blurSigma: 14,
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 12),
+                              onTap: _pilihJam,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -985,97 +963,93 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Jenis Perawatan', isDark),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: CustomAppDropdown(
+                      value: _selectedJenisPerawatan,
+                      items: _jenisPerawatanList,
+                      hint: 'Pilih jenis perawatan',
+                      enabled: !_isSaving,
+                      fillColor: Colors.transparent,
+                      borderColor: Colors.transparent,
+                      textStyle: TextStyle(fontSize: 14, color: textPrimary),
+                      onChanged: (val) {
+                        setState(() => _selectedJenisPerawatan = val);
+                      },
                     ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Jenis Perawatan', isDark),
-                const SizedBox(height: 8),
-                CustomAppDropdown(
-                  value: _selectedJenisPerawatan,
-                  items: _jenisPerawatanList,
-                  hint: 'Pilih jenis perawatan',
-                  enabled: !_isSaving,
-                  fillColor: fieldBgColor,
-                  borderColor: borderColor,
-                  textStyle: TextStyle(fontSize: 14, color: textPrimary),
-                  onChanged: (val) {
-                    setState(() => _selectedJenisPerawatan = val);
-                  },
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Estimasi Biaya Perawatan', isDark),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _estimasiBiayaController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  onChanged: _onBiayaChanged,
-                  style: TextStyle(fontSize: 14, color: textPrimary),
-                  decoration: _inputDecoration('00000', isDark).copyWith(
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 14, right: 4),
-                      child: Text(
-                        'Rp',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: textSecondary,
-                          fontWeight: FontWeight.w500,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Estimasi Biaya Perawatan', isDark),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _estimasiBiayaController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      onChanged: _onBiayaChanged,
+                      style: TextStyle(fontSize: 14, color: textPrimary),
+                      decoration: _glassInputDecoration('0').copyWith(
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(left: 14, right: 4),
+                          child: Text(
+                            'Rp',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
                         ),
                       ),
                     ),
-                    prefixIconConstraints: const BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Catatan Tambahan (Opsional)', isDark),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _catatanController,
+                      maxLines: 3,
+                      style: TextStyle(fontSize: 14, color: textPrimary),
+                      decoration:
+                          _glassInputDecoration('Masukkan catatan tambahan...'),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Catatan Tambahan (Opsional)', isDark),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _catatanController,
-                  maxLines: 3,
-                  style: TextStyle(fontSize: 14, color: textPrimary),
-                  decoration:
-                      _inputDecoration('Masukkan catatan tambahan...', isDark),
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
+                  const SizedBox(height: 32),
+                  LiquidGlassButton(
+                    width: double.infinity,
+                    height: 52,
+                    borderRadius: 16,
+                    tintColor: primaryBlue,
+                    isLoading: _isSaving,
                     onPressed: _isSaving ? null : _simpanPerubahan,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryBlue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                    child: Text(
+                      'Perbarui',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      elevation: 0,
                     ),
-                    child: _isSaving
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : Text(
-                            'Perbarui',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -1090,26 +1064,6 @@ class _EditJadwalScreenState extends State<EditJadwalScreen> {
         fontSize: 13.5,
         fontWeight: FontWeight.bold,
         color: isDark ? Colors.white : Colors.black87,
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(String hint, bool isDark) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13.5),
-      filled: true,
-      fillColor: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF3F4F6),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          color: isDark ? Colors.grey.shade800 : Colors.grey.shade400,
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF004AAD), width: 1.4),
       ),
     );
   }

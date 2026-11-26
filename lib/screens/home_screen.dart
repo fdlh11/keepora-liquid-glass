@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/asset_service.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import 'detail_barang_screen.dart';
 import 'notifikasi_screen.dart';
 import 'tambah_barang_screen.dart';
@@ -32,7 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String _selectedCategory = 'Semua';
   bool _hasShownOverdueDialog = false;
 
-  // List kategori disamakan dengan DetailBarangScreen
   final List<String> _categories = const [
     'Semua',
     'Elektronik',
@@ -142,7 +143,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
     const primaryBlue = Color(0xFF004AAD);
-    final dialogBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textPrimary = isDark ? Colors.white : const Color(0xFF1E1E1E);
     final textSecondary =
         isDark ? Colors.grey.shade300 : const Color(0xFF4B5563);
@@ -160,169 +160,150 @@ class _HomeScreenState extends State<HomeScreen> {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Peringatan Jadwal Terlewat',
-      barrierColor: Colors.black.withValues(alpha: 0.55),
+      barrierColor: Colors.black.withValues(alpha: 0.45),
       transitionDuration: const Duration(milliseconds: 220),
       pageBuilder: (dialogContext, _, _) {
         return Center(
-          child: Dialog(
-            insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(22),
-            ),
-            backgroundColor: dialogBg,
+          child: Material(
+            color: Colors.transparent,
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF7F1D1D).withValues(alpha: 0.35)
-                          : const Color(0xFFFEE2E2),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.warning_amber_rounded,
-                      size: 32,
-                      color: isDark
-                          ? const Color(0xFFFCA5A5)
-                          : const Color(0xFFDC2626),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    totalOverdue == 1
-                        ? 'Jadwal Perawatan Terlewat'
-                        : 'Ada $totalOverdue Jadwal Terlewat',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.montserrat(
-                      fontSize: 17.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    totalOverdue == 1
-                        ? 'Anda memiliki 1 jadwal perawatan yang sudah melewati tenggat dan belum ditandai selesai:'
-                        : 'Anda memiliki $totalOverdue jadwal perawatan yang melewati tenggat. Segera cek atau tandai selesai:',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 13,
-                      color: textSecondary,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: isDark
-                          ? const Color(0xFF262626)
-                          : const Color(0xFFF8FAFC),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: LiquidGlassSurface(
+                borderRadius: 24,
+                blurSigma: 22,
+                padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
                         color: isDark
-                            ? const Color(0xFFDC2626).withValues(alpha: 0.45)
-                            : const Color(0xFFFECACA),
+                            ? const Color(0xFF7F1D1D).withValues(alpha: 0.35)
+                            : const Color(0xFFFEE2E2),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.warning_amber_rounded,
+                        size: 32,
+                        color: isDark
+                            ? const Color(0xFFFCA5A5)
+                            : const Color(0xFFDC2626),
                       ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                firstTitle,
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: textPrimary,
-                                ),
-                              ),
-                            ),
-                            if (firstDate != null) ...[
-                              const SizedBox(width: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 3,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: isDark
-                                      ? const Color(0xFF7F1D1D)
-                                          .withValues(alpha: 0.45)
-                                      : const Color(0xFFFEE2E2),
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
+                    const SizedBox(height: 14),
+                    Text(
+                      totalOverdue == 1
+                          ? 'Jadwal Perawatan Terlewat'
+                          : 'Ada $totalOverdue Jadwal Terlewat',
+                      textAlign: TextAlign.center,
+                      style: GoogleFonts.montserrat(
+                        fontSize: 17.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      totalOverdue == 1
+                          ? 'Anda memiliki 1 jadwal perawatan yang sudah melewati tenggat dan belum ditandai selesai:'
+                          : 'Anda memiliki $totalOverdue jadwal perawatan yang melewati tenggat. Segera cek atau tandai selesai:',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: textSecondary,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 14),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 12,
+                      tintColor: const Color(0xFFDC2626),
+                      enableShadow: false,
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Expanded(
                                 child: Text(
-                                  _formatOverdueDuration(firstDate),
-                                  style: TextStyle(
-                                    fontSize: 10.5,
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark
-                                        ? const Color(0xFFFCA5A5)
-                                        : const Color(0xFFDC2626),
+                                  firstTitle,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 13.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
                                   ),
                                 ),
                               ),
+                              if (firstDate != null) ...[
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 8,
+                                    vertical: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isDark
+                                        ? const Color(0xFF7F1D1D)
+                                            .withValues(alpha: 0.45)
+                                        : const Color(0xFFFEE2E2),
+                                    borderRadius: BorderRadius.circular(20),
+                                  ),
+                                  child: Text(
+                                    _formatOverdueDuration(firstDate),
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w700,
+                                      color: isDark
+                                          ? const Color(0xFFFCA5A5)
+                                          : const Color(0xFFDC2626),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ],
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          firstAsset,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w500,
-                            color: textSecondary,
                           ),
-                        ),
-                        if (totalOverdue > 1) ...[
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 4),
                           Text(
-                            '+ ${totalOverdue - 1} jadwal terlewat lainnya',
+                            firstAsset,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                              fontSize: 11.5,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? const Color(0xFF60A5FA)
-                                  : primaryBlue,
+                              fontSize: 12.5,
+                              fontWeight: FontWeight.w500,
+                              color: textSecondary,
                             ),
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          height: 44,
-                          child: OutlinedButton(
-                            onPressed: () => Navigator.pop(dialogContext),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: isDark
-                                  ? const Color(0xFF60A5FA)
-                                  : primaryBlue,
-                              side: const BorderSide(
-                                color: Color(0xFF64A1F4),
-                                width: 1.2,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                          if (totalOverdue > 1) ...[
+                            const SizedBox(height: 6),
+                            Text(
+                              '+ ${totalOverdue - 1} jadwal terlewat lainnya',
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? const Color(0xFF60A5FA)
+                                    : primaryBlue,
                               ),
                             ),
+                          ],
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LiquidGlassButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            height: 44,
+                            borderRadius: 12,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: const Text(
                               'Nanti Saja',
                               style: TextStyle(
@@ -332,24 +313,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: SizedBox(
-                          height: 44,
-                          child: ElevatedButton(
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: LiquidGlassButton(
                             onPressed: () {
                               Navigator.pop(dialogContext);
                               widget.onNavigateToJadwal?.call();
                             },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryBlue,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                            ),
+                            height: 44,
+                            borderRadius: 12,
+                            tintColor: primaryBlue,
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
                             child: const Text(
                               'Lihat Jadwal',
                               style: TextStyle(
@@ -359,10 +333,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -470,7 +444,9 @@ class _HomeScreenState extends State<HomeScreen> {
         width: 86,
         height: 86,
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1E3A5F) : const Color(0xFFEFF6FF),
+          color: isDark
+              ? const Color(0xFF1E3A5F).withValues(alpha: 0.55)
+              : const Color(0xFFDBEAFE).withValues(alpha: 0.75),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Icon(
@@ -519,159 +495,156 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFD1D5DB);
-    final cardBorderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFE2E8F0);
     final textPrimary = isDark ? Colors.white : const Color(0xFF1E1E1E);
     final textSecondary =
         isDark ? Colors.grey.shade300 : const Color(0xFF374151);
-    final textMuted = isDark ? Colors.grey.shade500 : const Color(0xFF6B7280);
+    final textMuted = isDark ? Colors.grey.shade400 : const Color(0xFF6B7280);
     final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
 
-    return Scaffold(
-      backgroundColor: bgColor,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        bottom: false,
-        child: Stack(
-          children: [
-            StreamBuilder<QuerySnapshot>(
-              stream: _upcomingSchedulesStream,
-              builder: (context, schedSnapshot) {
-                final now = DateTime.now();
-                final today = DateTime(now.year, now.month, now.day);
-                final schedDocs = schedSnapshot.data?.docs ?? [];
+    return LiquidGlassBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        resizeToAvoidBottomInset: false,
+        body: SafeArea(
+          bottom: false,
+          child: Stack(
+            children: [
+              StreamBuilder<QuerySnapshot>(
+                stream: _upcomingSchedulesStream,
+                builder: (context, schedSnapshot) {
+                  final now = DateTime.now();
+                  final today = DateTime(now.year, now.month, now.day);
+                  final schedDocs = schedSnapshot.data?.docs ?? [];
 
-                final activeSchedules = schedDocs.where((doc) {
-                  final data = doc.data() as Map<String, dynamic>? ?? {};
-                  final status =
-                      (data['status'] ?? '').toString().toLowerCase();
-                  final isCompleted = data['isCompleted'] == true ||
-                      status == 'selesai' ||
-                      status == 'completed';
-                  return !isCompleted && _parseScheduleDate(data) != null;
-                }).toList()
-                  ..sort((a, b) {
-                    final dtA =
-                        _parseScheduleDate(a.data() as Map<String, dynamic>)!;
-                    final dtB =
-                        _parseScheduleDate(b.data() as Map<String, dynamic>)!;
-                    return dtA.compareTo(dtB);
-                  });
-
-                if (schedSnapshot.hasData && !_hasShownOverdueDialog) {
-                  _hasShownOverdueDialog = true;
-                  final overdueDocs = activeSchedules.where((doc) {
-                    final dt = _parseScheduleDate(
-                        doc.data() as Map<String, dynamic>)!;
-                    return dt.isBefore(now);
-                  }).toList();
-
-                  if (overdueDocs.isNotEmpty) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      _showOverdueMaintenanceDialog(overdueDocs);
+                  final activeSchedules = schedDocs.where((doc) {
+                    final data = doc.data() as Map<String, dynamic>? ?? {};
+                    final status =
+                        (data['status'] ?? '').toString().toLowerCase();
+                    final isCompleted = data['isCompleted'] == true ||
+                        status == 'selesai' ||
+                        status == 'completed';
+                    return !isCompleted && _parseScheduleDate(data) != null;
+                  }).toList()
+                    ..sort((a, b) {
+                      final dtA = _parseScheduleDate(
+                          a.data() as Map<String, dynamic>)!;
+                      final dtB = _parseScheduleDate(
+                          b.data() as Map<String, dynamic>)!;
+                      return dtA.compareTo(dtB);
                     });
-                  }
-                }
 
-                final urgentCount = activeSchedules.where((doc) {
-                  final dt =
-                      _parseScheduleDate(doc.data() as Map<String, dynamic>)!;
-                  final target = DateTime(dt.year, dt.month, dt.day);
-                  return target.difference(today).inDays <= 3;
-                }).length;
-
-                final hasUpcoming = activeSchedules.isNotEmpty;
-                final Map<String, dynamic> nextData = hasUpcoming
-                    ? (activeSchedules.first.data() as Map<String, dynamic>? ??
-                        {})
-                    : {};
-                final DateTime? nextDate =
-                    hasUpcoming ? _parseScheduleDate(nextData) : null;
-                final String schedTitle = hasUpcoming
-                    ? (nextData['title'] ?? 'Perawatan Terjadwal').toString()
-                    : 'Belum Ada Jadwal Mendatang';
-                final String schedAsset = hasUpcoming
-                    ? (nextData['assetName'] ?? '-').toString()
-                    : 'Ketuk untuk menambah jadwal perawatan';
-                final String schedType = hasUpcoming
-                    ? (nextData['maintenanceType'] ?? 'Perawatan').toString()
-                    : 'Perawatan';
-
-                return StreamBuilder<QuerySnapshot>(
-                  stream: _assetsStream,
-                  builder: (context, assetSnapshot) {
-                    final allDocs = assetSnapshot.data?.docs ?? [];
-                    final filteredDocs = allDocs.where((doc) {
-                      final data = doc.data() as Map<String, dynamic>? ?? {};
-                      final name =
-                          (data['name'] ?? '').toString().toLowerCase();
-                      final category = (data['category'] ?? '').toString();
-
-                      final matchesSearch =
-                          _searchQuery.isEmpty || name.contains(_searchQuery);
-                      final matchesCategory = _selectedCategory == 'Semua' ||
-                          category == _selectedCategory;
-
-                      return matchesSearch && matchesCategory;
+                  if (schedSnapshot.hasData && !_hasShownOverdueDialog) {
+                    _hasShownOverdueDialog = true;
+                    final overdueDocs = activeSchedules.where((doc) {
+                      final dt = _parseScheduleDate(
+                          doc.data() as Map<String, dynamic>)!;
+                      return dt.isBefore(now);
                     }).toList();
 
-                    return CustomScrollView(
-                      slivers: [
-                        // Header Judul + Lonceng Polos & Tagline Muat Satu Baris
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 14, 18, 14),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      'KEEPORA',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 24,
-                                        fontWeight: FontWeight.w800,
-                                        letterSpacing: 0.4,
-                                        color: isDark
-                                            ? Colors.white
-                                            : const Color(0xFF3F3D3C),
+                    if (overdueDocs.isNotEmpty) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _showOverdueMaintenanceDialog(overdueDocs);
+                      });
+                    }
+                  }
+
+                  final urgentCount = activeSchedules.where((doc) {
+                    final dt = _parseScheduleDate(
+                        doc.data() as Map<String, dynamic>)!;
+                    final target = DateTime(dt.year, dt.month, dt.day);
+                    return target.difference(today).inDays <= 3;
+                  }).length;
+
+                  final hasUpcoming = activeSchedules.isNotEmpty;
+                  final Map<String, dynamic> nextData = hasUpcoming
+                      ? (activeSchedules.first.data()
+                              as Map<String, dynamic>? ??
+                          {})
+                      : {};
+                  final DateTime? nextDate =
+                      hasUpcoming ? _parseScheduleDate(nextData) : null;
+                  final String schedTitle = hasUpcoming
+                      ? (nextData['title'] ?? 'Perawatan Terjadwal').toString()
+                      : 'Belum Ada Jadwal Mendatang';
+                  final String schedAsset = hasUpcoming
+                      ? (nextData['assetName'] ?? '-').toString()
+                      : 'Ketuk untuk menambah jadwal perawatan';
+                  final String schedType = hasUpcoming
+                      ? (nextData['maintenanceType'] ?? 'Perawatan').toString()
+                      : 'Perawatan';
+
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: _assetsStream,
+                    builder: (context, assetSnapshot) {
+                      final allDocs = assetSnapshot.data?.docs ?? [];
+                      final filteredDocs = allDocs.where((doc) {
+                        final data = doc.data() as Map<String, dynamic>? ?? {};
+                        final name =
+                            (data['name'] ?? '').toString().toLowerCase();
+                        final category = (data['category'] ?? '').toString();
+
+                        final matchesSearch = _searchQuery.isEmpty ||
+                            name.contains(_searchQuery);
+                        final matchesCategory = _selectedCategory == 'Semua' ||
+                            category == _selectedCategory;
+
+                        return matchesSearch && matchesCategory;
+                      }).toList();
+
+                      return CustomScrollView(
+                        slivers: [
+                          // Header Judul + Lonceng & Tagline
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(18, 14, 18, 14),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Text(
+                                        'KEEPORA',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 24,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.4,
+                                          color: isDark
+                                              ? Colors.white
+                                              : const Color(0xFF1E293B),
+                                        ),
                                       ),
-                                    ),
-                                    InkWell(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) =>
-                                                const NotifikasiScreen(),
-                                          ),
-                                        );
-                                      },
-                                      borderRadius: BorderRadius.circular(20),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(4),
+                                      LiquidGlassSurface(
+                                        borderRadius: 14,
+                                        blurSigma: 14,
+                                        padding: const EdgeInsets.all(8),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) =>
+                                                  const NotifikasiScreen(),
+                                            ),
+                                          );
+                                        },
                                         child: Stack(
                                           clipBehavior: Clip.none,
                                           children: [
                                             Icon(
                                               Icons.notifications_none_rounded,
-                                              size: 26,
+                                              size: 23,
                                               color: isDark
                                                   ? Colors.white
-                                                  : const Color(0xFF3F3D3C),
+                                                  : const Color(0xFF1E293B),
                                             ),
                                             if (urgentCount > 0)
                                               Positioned(
-                                                top: -3,
-                                                right: -4,
+                                                top: -5,
+                                                right: -6,
                                                 child: Container(
                                                   padding: const EdgeInsets
                                                       .symmetric(
@@ -707,148 +680,122 @@ class _HomeScreenState extends State<HomeScreen> {
                                           ],
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 4),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      'Mengelola barang pribadi Anda dalam satu aplikasi',
-                                      maxLines: 1,
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 13.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: isDark
-                                            ? Colors.grey.shade300
-                                            : const Color(0xFF3F3D3C),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Search Bar
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
-                            child: TextField(
-                              controller: _searchController,
-                              onChanged: (val) => setState(
-                                () => _searchQuery = val.toLowerCase().trim(),
-                              ),
-                              style:
-                                  TextStyle(fontSize: 13.5, color: textPrimary),
-                              decoration: InputDecoration(
-                                hintText: 'Cari Barang Pribadi',
-                                hintStyle: TextStyle(
-                                  fontSize: 13.5,
-                                  color: textMuted,
-                                ),
-                                prefixIcon: Icon(
-                                  Icons.search_rounded,
-                                  color: textMuted,
-                                  size: 23,
-                                ),
-                                suffixIcon: _searchQuery.isNotEmpty
-                                    ? IconButton(
-                                        icon: Icon(
-                                          Icons.close_rounded,
-                                          size: 18,
-                                          color: textSecondary,
-                                        ),
-                                        onPressed: () {
-                                          _searchController.clear();
-                                          setState(() => _searchQuery = '');
-                                        },
-                                      )
-                                    : null,
-                                filled: true,
-                                fillColor: isDark
-                                    ? const Color(0xFF1E1E1E)
-                                    : const Color(0xFFF8FAFC),
-                                contentPadding:
-                                    const EdgeInsets.symmetric(vertical: 13),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(color: borderColor),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: BorderSide(color: borderColor),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(14),
-                                  borderSide: const BorderSide(
-                                    color: primaryBlue,
-                                    width: 1.4,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        // Section Perawatan Mendatang
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                InkWell(
-                                  onTap: widget.onNavigateToJadwal,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        'Perawatan Mendatang',
-                                        style: GoogleFonts.montserrat(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.bold,
-                                          color: textPrimary,
-                                        ),
-                                      ),
-                                      Icon(
-                                        Icons.north_east_rounded,
-                                        size: 20,
-                                        color: accentBlue,
-                                      ),
                                     ],
                                   ),
-                                ),
-                                const SizedBox(height: 10),
-                                InkWell(
-                                  onTap: widget.onNavigateToJadwal,
-                                  borderRadius: BorderRadius.circular(18),
-                                  child: Container(
+                                  const SizedBox(height: 4),
+                                  SizedBox(
                                     width: double.infinity,
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        'Mengelola barang pribadi Anda dalam satu aplikasi',
+                                        maxLines: 1,
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: textSecondary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                          // Search Bar Liquid Glass
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+                              child: LiquidGlassSurface(
+                                borderRadius: 16,
+                                blurSigma: 16,
+                                child: TextField(
+                                  controller: _searchController,
+                                  onChanged: (val) => setState(
+                                    () =>
+                                        _searchQuery = val.toLowerCase().trim(),
+                                  ),
+                                  style: TextStyle(
+                                      fontSize: 13.5, color: textPrimary),
+                                  decoration: InputDecoration(
+                                    hintText: 'Cari Barang Pribadi',
+                                    hintStyle: TextStyle(
+                                      fontSize: 13.5,
+                                      color: textMuted,
+                                    ),
+                                    prefixIcon: Icon(
+                                      Icons.search_rounded,
+                                      color: textMuted,
+                                      size: 22,
+                                    ),
+                                    suffixIcon: _searchQuery.isNotEmpty
+                                        ? IconButton(
+                                            icon: Icon(
+                                              Icons.close_rounded,
+                                              size: 18,
+                                              color: textSecondary,
+                                            ),
+                                            onPressed: () {
+                                              _searchController.clear();
+                                              setState(() => _searchQuery = '');
+                                            },
+                                          )
+                                        : null,
+                                    border: InputBorder.none,
+                                    enabledBorder: InputBorder.none,
+                                    focusedBorder: InputBorder.none,
+                                    contentPadding:
+                                        const EdgeInsets.symmetric(vertical: 14),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // Section Perawatan Mendatang
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(18, 0, 18, 18),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: widget.onNavigateToJadwal,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          'Perawatan Mendatang',
+                                          style: GoogleFonts.montserrat(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: textPrimary,
+                                          ),
+                                        ),
+                                        Icon(
+                                          Icons.north_east_rounded,
+                                          size: 20,
+                                          color: accentBlue,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(height: 10),
+                                  LiquidGlassSurface(
+                                    width: double.infinity,
+                                    borderRadius: 20,
+                                    blurSigma: 18,
+                                    tintColor: primaryBlue,
+                                    onTap: widget.onNavigateToJadwal,
                                     padding: const EdgeInsets.fromLTRB(
                                       16,
                                       14,
                                       16,
                                       16,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: primaryBlue,
-                                      borderRadius: BorderRadius.circular(18),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: primaryBlue.withValues(
-                                            alpha: isDark ? 0.35 : 0.22,
-                                          ),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 4),
-                                        ),
-                                      ],
                                     ),
                                     child: Column(
                                       crossAxisAlignment:
@@ -865,17 +812,21 @@ class _HomeScreenState extends State<HomeScreen> {
                                                 vertical: 4,
                                               ),
                                               decoration: BoxDecoration(
-                                                color: Colors.white,
+                                                color: isDark
+                                                    ? Colors.white
+                                                        .withValues(alpha: 0.14)
+                                                    : Colors.white
+                                                        .withValues(alpha: 0.85),
                                                 borderRadius:
                                                     BorderRadius.circular(20),
                                               ),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  const Icon(
+                                                  Icon(
                                                     Icons.access_time_rounded,
                                                     size: 14,
-                                                    color: primaryBlue,
+                                                    color: accentBlue,
                                                   ),
                                                   const SizedBox(width: 5),
                                                   Text(
@@ -890,7 +841,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontSize: 11.5,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: primaryBlue,
+                                                      color: accentBlue,
                                                     ),
                                                   ),
                                                 ],
@@ -899,10 +850,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                             if (hasUpcoming && nextDate != null)
                                               Text(
                                                 _formatTanggalLengkap(nextDate),
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: textPrimary,
                                                 ),
                                               ),
                                           ],
@@ -914,7 +865,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                               width: 44,
                                               height: 44,
                                               decoration: BoxDecoration(
-                                                color: Colors.white.withValues(
+                                                color: accentBlue.withValues(
                                                   alpha: 0.16,
                                                 ),
                                                 borderRadius:
@@ -927,7 +878,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       )
                                                     : Icons
                                                         .event_available_outlined,
-                                                color: Colors.white,
+                                                color: accentBlue,
                                                 size: 24,
                                               ),
                                             ),
@@ -947,7 +898,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      color: Colors.white,
+                                                      color: textPrimary,
                                                     ),
                                                   ),
                                                   const SizedBox(height: 2),
@@ -958,10 +909,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      color: Colors.white
-                                                          .withValues(
-                                                        alpha: 0.88,
-                                                      ),
+                                                      color: textSecondary,
                                                     ),
                                                   ),
                                                 ],
@@ -972,235 +920,214 @@ class _HomeScreenState extends State<HomeScreen> {
                                       ],
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Section Header Daftar Barang + Counter
-                        SliverToBoxAdapter(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.baseline,
-                              textBaseline: TextBaseline.alphabetic,
-                              children: [
-                                Text(
-                                  'Daftar Barang',
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 15.5,
-                                    fontWeight: FontWeight.bold,
-                                    color: textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  '${filteredDocs.length} barang',
-                                  style: TextStyle(
-                                    fontSize: 12.5,
-                                    fontWeight: FontWeight.w500,
-                                    color: textMuted,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Chip Kategori
-                        SliverToBoxAdapter(
-                          child: SizedBox(
-                            height: 36,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 18),
-                              itemCount: _categories.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(width: 8),
-                              itemBuilder: (context, index) {
-                                final category = _categories[index];
-                                final isSelected =
-                                    _selectedCategory == category;
-
-                                return GestureDetector(
-                                  behavior: HitTestBehavior.opaque,
-                                  onTap: () {
-                                    if (_selectedCategory != category) {
-                                      setState(
-                                          () => _selectedCategory = category);
-                                    }
-                                  },
-                                  child: Container(
-                                    alignment: Alignment.center,
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    decoration: BoxDecoration(
-                                      color: isSelected
-                                          ? primaryBlue
-                                          : surfaceColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                      border: Border.all(
-                                        color: isSelected
-                                            ? primaryBlue
-                                            : borderColor,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      category,
-                                      style: TextStyle(
-                                        fontSize: 12.5,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.w500,
-                                        color: isSelected
-                                            ? Colors.white
-                                            : textSecondary,
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          ),
-                        ),
-
-                        const SliverToBoxAdapter(child: SizedBox(height: 14)),
-
-                        // Daftar Card Barang
-                        if (assetSnapshot.connectionState ==
-                                ConnectionState.waiting &&
-                            !assetSnapshot.hasData)
-                          const SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child:
-                                  CircularProgressIndicator(color: primaryBlue),
-                            ),
-                          )
-                        else if (assetSnapshot.hasError)
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(20),
-                                child: Text(
-                                  'Terjadi kesalahan saat memuat data: ${assetSnapshot.error}',
-                                  textAlign: TextAlign.center,
-                                  style:
-                                      const TextStyle(color: Colors.redAccent),
-                                ),
+                                ],
                               ),
                             ),
-                          )
-                        else if (filteredDocs.isEmpty)
-                          SliverFillRemaining(
-                            hasScrollBody: false,
-                            child: Center(
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(32, 24, 32, 130),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.inventory_2_outlined,
-                                      size: 52,
+                          ),
+
+                          // Section Header Daftar Barang + Counter
+                          SliverToBoxAdapter(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(18, 0, 18, 10),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.baseline,
+                                textBaseline: TextBaseline.alphabetic,
+                                children: [
+                                  Text(
+                                    'Daftar Barang',
+                                    style: GoogleFonts.montserrat(
+                                      fontSize: 15.5,
+                                      fontWeight: FontWeight.bold,
+                                      color: textPrimary,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    '${filteredDocs.length} barang',
+                                    style: TextStyle(
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w500,
                                       color: textMuted,
                                     ),
-                                    const SizedBox(height: 12),
-                                    Text(
-                                      allDocs.isEmpty
-                                          ? 'Belum ada barang tersimpan'
-                                          : 'Barang tidak ditemukan',
-                                      style: GoogleFonts.montserrat(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                        color: textPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      allDocs.isEmpty
-                                          ? 'Tambahkan barang pertama Anda lewat tombol + Barang di pojok kanan bawah.'
-                                          : 'Coba ubah kata kunci pencarian atau filter kategori.',
-                                      textAlign: TextAlign.center,
-                                      style: TextStyle(
-                                        fontSize: 13,
-                                        color: textSecondary,
-                                        height: 1.4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                             ),
-                          )
-                        else
-                          SliverPadding(
-                            padding: const EdgeInsets.fromLTRB(18, 0, 18, 165),
-                            sliver: SliverList.separated(
-                              itemCount: filteredDocs.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(height: 12),
-                              itemBuilder: (context, index) {
-                                final doc = filteredDocs[index];
-                                final data =
-                                    doc.data() as Map<String, dynamic>? ?? {};
+                          ),
 
-                                final name =
-                                    (data['name'] ?? 'Tanpa Nama').toString();
-                                final category =
-                                    (data['category'] ?? 'Lainnya').toString();
-                                final condition =
-                                    (data['condition'] ?? 'Bagus').toString();
-                                final conditionDetail =
-                                    (data['conditionDetail'] ?? '')
-                                        .toString()
-                                        .trim();
-                                final lastMaint =
-                                    (data['lastMaintenance'] ?? '-').toString();
+                          // Chip Kategori Liquid Glass
+                          SliverToBoxAdapter(
+                            child: SizedBox(
+                              height: 38,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 18),
+                                itemCount: _categories.length,
+                                separatorBuilder: (_, _) =>
+                                    const SizedBox(width: 8),
+                                itemBuilder: (context, index) {
+                                  final category = _categories[index];
+                                  final isSelected =
+                                      _selectedCategory == category;
 
-                                final showConditionDetail =
-                                    conditionDetail.isNotEmpty;
-
-                                final condTextColor =
-                                    _getConditionTextColor(condition, isDark);
-                                final condBgColor =
-                                    _getConditionBgColor(condition, isDark);
-                                final condBorderColor =
-                                    _getConditionBorderColor(condition, isDark);
-
-                                return InkWell(
-                                  key: ValueKey('asset_card_${doc.id}'),
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) =>
-                                            DetailBarangScreen(assetId: doc.id),
+                                  return LiquidGlassSurface(
+                                    borderRadius: 20,
+                                    blurSigma: 12,
+                                    enableShadow: false,
+                                    tintColor: isSelected ? primaryBlue : null,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16),
+                                    onTap: () {
+                                      if (_selectedCategory != category) {
+                                        setState(() =>
+                                            _selectedCategory = category);
+                                      }
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        category,
+                                        style: TextStyle(
+                                          fontSize: 12.5,
+                                          fontWeight: isSelected
+                                              ? FontWeight.w700
+                                              : FontWeight.w500,
+                                          color: isSelected
+                                              ? accentBlue
+                                              : textSecondary,
+                                        ),
                                       ),
-                                    );
-                                  },
-                                  borderRadius: BorderRadius.circular(18),
-                                  child: Container(
-                                    padding: const EdgeInsets.all(12),
-                                    decoration: BoxDecoration(
-                                      color: surfaceColor,
-                                      borderRadius: BorderRadius.circular(18),
-                                      border:
-                                          Border.all(color: cardBorderColor),
-                                      boxShadow: [
-                                        if (!isDark)
-                                          BoxShadow(
-                                            color: Colors.black
-                                                .withValues(alpha: 0.03),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 2),
-                                          ),
-                                      ],
                                     ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+
+                          const SliverToBoxAdapter(child: SizedBox(height: 14)),
+
+                          // Daftar Card Barang
+                          if (assetSnapshot.connectionState ==
+                                  ConnectionState.waiting &&
+                              !assetSnapshot.hasData)
+                            const SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                    color: primaryBlue),
+                              ),
+                            )
+                          else if (assetSnapshot.hasError)
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Text(
+                                    'Terjadi kesalahan saat memuat data: ${assetSnapshot.error}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                        color: Colors.redAccent),
+                                  ),
+                                ),
+                              ),
+                            )
+                          else if (filteredDocs.isEmpty)
+                            SliverFillRemaining(
+                              hasScrollBody: false,
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      32, 24, 32, 130),
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.inventory_2_outlined,
+                                        size: 52,
+                                        color: textMuted,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        allDocs.isEmpty
+                                            ? 'Belum ada barang tersimpan'
+                                            : 'Barang tidak ditemukan',
+                                        style: GoogleFonts.montserrat(
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.bold,
+                                          color: textPrimary,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        allDocs.isEmpty
+                                            ? 'Tambahkan barang pertama Anda lewat tombol + Barang di pojok kanan bawah.'
+                                            : 'Coba ubah kata kunci pencarian atau filter kategori.',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          color: textSecondary,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            SliverPadding(
+                              padding:
+                                  const EdgeInsets.fromLTRB(18, 0, 18, 165),
+                              sliver: SliverList.separated(
+                                itemCount: filteredDocs.length,
+                                separatorBuilder: (_, _) =>
+                                    const SizedBox(height: 12),
+                                itemBuilder: (context, index) {
+                                  final doc = filteredDocs[index];
+                                  final data =
+                                      doc.data() as Map<String, dynamic>? ?? {};
+
+                                  final name =
+                                      (data['name'] ?? 'Tanpa Nama').toString();
+                                  final category =
+                                      (data['category'] ?? 'Lainnya')
+                                          .toString();
+                                  final condition =
+                                      (data['condition'] ?? 'Bagus').toString();
+                                  final conditionDetail =
+                                      (data['conditionDetail'] ?? '')
+                                          .toString()
+                                          .trim();
+                                  final lastMaint =
+                                      (data['lastMaintenance'] ?? '-')
+                                          .toString();
+
+                                  final showConditionDetail =
+                                      conditionDetail.isNotEmpty;
+
+                                  final condTextColor =
+                                      _getConditionTextColor(condition, isDark);
+                                  final condBgColor =
+                                      _getConditionBgColor(condition, isDark);
+                                  final condBorderColor =
+                                      _getConditionBorderColor(
+                                          condition, isDark);
+
+                                  return LiquidGlassSurface(
+                                    key: ValueKey('asset_card_${doc.id}'),
+                                    borderRadius: 18,
+                                    blurSigma: 14,
+                                    padding: const EdgeInsets.all(12),
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => DetailBarangScreen(
+                                              assetId: doc.id),
+                                        ),
+                                      );
+                                    },
                                     child: Row(
                                       children: [
                                         _buildAssetThumbnail(
@@ -1231,10 +1158,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                                         color: isDark
                                                             ? const Color(
                                                                 0xFF172554,
-                                                              )
+                                                              ).withValues(
+                                                                alpha: 0.65)
                                                             : const Color(
                                                                 0xFFDBEAFE,
-                                                              ),
+                                                              ).withValues(
+                                                                alpha: 0.85),
                                                         borderRadius:
                                                             BorderRadius
                                                                 .circular(
@@ -1365,54 +1294,54 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ],
                                     ),
-                                  ),
-                                );
-                              },
+                                  );
+                                },
+                              ),
                             ),
-                          ),
-                      ],
-                    );
-                  },
-                );
-              },
-            ),
-
-            // Tombol mengambang + Barang tetap di atas navbar
-            Positioned(
-              right: 20,
-              bottom: 98,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const TambahBarangScreen(),
-                    ),
+                        ],
+                      );
+                    },
                   );
                 },
-                icon: const Icon(Icons.add, size: 20),
-                label: Text(
-                  'Barang',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
-                  foregroundColor: Colors.white,
+              ),
+
+              // Tombol mengambang + Barang (LiquidGlassButton)
+              Positioned(
+                right: 20,
+                bottom: 98,
+                child: LiquidGlassButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const TambahBarangScreen(),
+                      ),
+                    );
+                  },
+                  borderRadius: 30,
+                  tintColor: primaryBlue,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 13,
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.add, size: 20),
+                      const SizedBox(width: 6),
+                      Text(
+                        'Barang',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  elevation: 4,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

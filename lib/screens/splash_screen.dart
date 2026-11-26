@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/liquid_glass_kit.dart';
+
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -52,43 +54,57 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    const primaryBlue = Color(0xFF004AAD);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary =
+        isDark ? Colors.white.withValues(alpha: 0.78) : const Color(0xFF334155);
+
     return Scaffold(
-      backgroundColor: const Color(0xFF004AAD),
-      body: SafeArea(
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                'assets/image/logo.png',
-                width: 260,
-                height: 260,
-                fit: BoxFit.contain,
+      backgroundColor: Colors.transparent,
+      body: LiquidGlassBackground(
+        child: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  LiquidGlassSurface(
+                    borderRadius: 44,
+                    blurSigma: 22,
+                    tintColor: primaryBlue,
+                    padding: const EdgeInsets.all(28),
+                    child: Image.asset(
+                      'assets/image/logo.png',
+                      width: 190,
+                      height: 190,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Text(
+                    'Keepora',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 34,
+                      fontWeight: FontWeight.w800,
+                      color: textPrimary,
+                      letterSpacing: 0.6,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Mengelola Barang Pribadi Anda Dalam Satu Aplikasi.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      color: textSecondary,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(height: 20),
-
-              // Nama Aplikasi
-              Text(
-                'Keepora',
-                style: GoogleFonts.montserrat(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                  letterSpacing: 0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-
-              // Tagline
-              Text(
-                'Mengelola Barang Pribadi Anda Dalam Satu Aplikasi.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: Colors.white.withValues(alpha: 0.85),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

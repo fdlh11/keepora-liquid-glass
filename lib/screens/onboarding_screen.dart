@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -64,152 +67,159 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryBlue = Color(0xFF0056C6);
+    const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
-    final titleColor = isDark ? Colors.white : Colors.black87;
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
     final subtitleColor =
-        isDark ? Colors.grey.shade400 : Colors.black54;
-    final skipColor = isDark ? const Color(0xFF60A5FA) : primaryBlue;
-    final inactiveDotColor =
-        isDark ? Colors.grey.shade800 : Colors.grey.shade300;
+        isDark ? Colors.white.withValues(alpha: 0.76) : const Color(0xFF334155);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
+    final inactiveDotColor = isDark
+        ? Colors.white.withValues(alpha: 0.24)
+        : primaryBlue.withValues(alpha: 0.22);
 
     return Scaffold(
-      backgroundColor: bgColor,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Tombol lewati
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 8.0,
-              ),
-              child: SizedBox(
-                height: 40,
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: _currentIndex < _onboardingData.length - 1
-                      ? TextButton(
-                          onPressed: _finishOnboarding,
-                          child: Text(
-                            'Lewati',
-                            style: TextStyle(
-                              color: skipColor,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
+      backgroundColor: Colors.transparent,
+      body: LiquidGlassBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              // Tombol lewati kaca
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20.0,
+                  vertical: 10.0,
+                ),
+                child: SizedBox(
+                  height: 40,
+                  child: Align(
+                    alignment: Alignment.centerRight,
+                    child: _currentIndex < _onboardingData.length - 1
+                        ? LiquidGlassSurface(
+                            borderRadius: 20,
+                            blurSigma: 12,
+                            enableShadow: false,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14,
+                              vertical: 8,
                             ),
-                          ),
-                        )
-                      : const SizedBox.shrink(),
+                            onTap: _finishOnboarding,
+                            child: Text(
+                              'Lewati',
+                              style: TextStyle(
+                                color: accentBlue,
+                                fontSize: 13.5,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
+                  ),
                 ),
               ),
-            ),
 
-            // Slide onboarding
-            Expanded(
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: _onboardingData.length,
-                onPageChanged: (index) {
-                  setState(() => _currentIndex = index);
-                },
-                itemBuilder: (context, index) {
-                  final item = _onboardingData[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Lottie.asset(
-                          item['animation']!,
-                          height: 240,
-                          fit: BoxFit.contain,
-                        ),
-                        const SizedBox(height: 36),
-
-                        // Judul Slide
-                        Text(
-                          item['title']!,
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.montserrat(
-                            fontSize: 22,
-                            fontWeight: FontWeight.bold,
-                            color: titleColor,
+              // Slide onboarding
+              Expanded(
+                child: PageView.builder(
+                  controller: _pageController,
+                  itemCount: _onboardingData.length,
+                  onPageChanged: (index) {
+                    setState(() => _currentIndex = index);
+                  },
+                  itemBuilder: (context, index) {
+                    final item = _onboardingData[index];
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          LiquidGlassSurface(
+                            borderRadius: 32,
+                            blurSigma: 20,
+                            padding: const EdgeInsets.all(24),
+                            child: Lottie.asset(
+                              item['animation']!,
+                              height: 220,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 12),
+                          const SizedBox(height: 32),
 
-                        // Subtitle Deskripsi
-                        Text(
-                          item['subtitle']!,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: subtitleColor,
-                            height: 1.4,
+                          // Judul Slide
+                          Text(
+                            item['title']!,
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.montserrat(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: titleColor,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 12),
+
+                          // Subtitle Deskripsi
+                          Text(
+                            item['subtitle']!,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              color: subtitleColor,
+                              height: 1.45,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+
+              // Indikator slide
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(_onboardingData.length, (index) {
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 220),
+                    margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                    width: _currentIndex == index ? 26.0 : 8.0,
+                    height: 8.0,
+                    decoration: BoxDecoration(
+                      color: _currentIndex == index
+                          ? accentBlue
+                          : inactiveDotColor,
+                      borderRadius: BorderRadius.circular(4.0),
                     ),
                   );
-                },
+                }),
               ),
-            ),
 
-            // Indikator slide
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(_onboardingData.length, (index) {
-                return AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                  width: _currentIndex == index ? 24.0 : 8.0,
-                  height: 8.0,
-                  decoration: BoxDecoration(
-                    color: _currentIndex == index
-                        ? primaryBlue
-                        : inactiveDotColor,
-                    borderRadius: BorderRadius.circular(4.0),
-                  ),
-                );
-              }),
-            ),
+              const SizedBox(height: 28),
 
-            const SizedBox(height: 32),
-
-            // Tombol lanjut/mulai
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24.0,
-                vertical: 16.0,
-              ),
-              child: SizedBox(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
+              // Tombol lanjut/mulai LiquidGlassButton
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24.0,
+                  vertical: 16.0,
+                ),
+                child: LiquidGlassButton(
+                  width: double.infinity,
+                  height: 52,
+                  borderRadius: 18,
+                  tintColor: primaryBlue,
+                  foregroundColor: isDark ? Colors.white : primaryBlue,
                   onPressed: _onNext,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryBlue,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
                   child: Text(
                     _currentIndex == _onboardingData.length - 1
                         ? 'Mulai'
                         : 'Lanjut',
-                    style: const TextStyle(
+                    style: GoogleFonts.montserrat(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

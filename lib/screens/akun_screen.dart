@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'dart:ui';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,6 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../main.dart';
 import '../services/auth_service.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import 'edit_profile_screen.dart';
 import 'ekspor_data_perawatan_screen.dart';
 import 'login_screen.dart';
@@ -39,108 +42,107 @@ class _AkunScreenState extends State<AkunScreen> {
         : const Stream.empty();
   }
 
-  // Button Logout
   Future<void> _confirmLogout() async {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool? shouldLogout = await showDialog<bool>(
+    const primaryBlue = Color(0xFF004AAD);
+    final bool? shouldLogout = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 220),
+      pageBuilder: (dialogContext, _, _) => Center(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Logout Akun',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Apakah Anda yakin untuk Logout? Anda harus Login kembali jika ingin masuk kembali ke Akun ini.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Material(
+            color: Colors.transparent,
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
+                  Text(
+                    'Logout Akun',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : const Color(0xFF0F172A),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Apakah Anda yakin untuk Logout? Anda harus Login kembali jika ingin masuk kembali ke Akun ini.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.78)
+                          : const Color(0xFF334155),
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFFEF4444),
+                          foregroundColor: isDark
+                              ? const Color(0xFFFCA5A5)
+                              : const Color(0xFFDC2626),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Ya, Logout',
-                            maxLines: 1,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          child: const Center(
+                            child: Text(
+                              'Ya, Logout',
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: primaryBlue,
+                          foregroundColor: isDark ? Colors.white : primaryBlue,
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Batal',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          child: const Center(
+                            child: Text(
+                              'Batal',
+                              maxLines: 1,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
+      ),
+      transitionBuilder: (_, anim, _, child) => BackdropFilter(
+        filter: ImageFilter.blur(
+          sigmaX: 4 * anim.value,
+          sigmaY: 4 * anim.value,
+        ),
+        child: FadeTransition(opacity: anim, child: child),
       ),
     );
 
@@ -201,9 +203,9 @@ class _AkunScreenState extends State<AkunScreen> {
     );
   }
 
-  Widget _buildProfileAvatar(String photoUrl) {
+  Widget _buildProfileAvatar(String photoUrl, Color accentBlue) {
     if (photoUrl.isEmpty) {
-      return const SizedBox.shrink();
+      return Icon(Icons.person_rounded, size: 38, color: accentBlue);
     }
 
     if (photoUrl.startsWith('data:image')) {
@@ -217,7 +219,9 @@ class _AkunScreenState extends State<AkunScreen> {
         }
       }
 
-      if (_cachedAvatarBytes == null) return const SizedBox.shrink();
+      if (_cachedAvatarBytes == null) {
+        return Icon(Icons.person_rounded, size: 38, color: accentBlue);
+      }
 
       return ClipOval(
         child: Image.memory(
@@ -226,7 +230,8 @@ class _AkunScreenState extends State<AkunScreen> {
           height: 78,
           fit: BoxFit.cover,
           gaplessPlayback: true,
-          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          errorBuilder: (_, __, ___) =>
+              Icon(Icons.person_rounded, size: 38, color: accentBlue),
         ),
       );
     }
@@ -238,7 +243,8 @@ class _AkunScreenState extends State<AkunScreen> {
         height: 78,
         fit: BoxFit.cover,
         gaplessPlayback: true,
-        errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+        errorBuilder: (_, __, ___) =>
+            Icon(Icons.person_rounded, size: 38, color: accentBlue),
       ),
     );
   }
@@ -254,19 +260,15 @@ class _AkunScreenState extends State<AkunScreen> {
     final email = user?.email ?? '-';
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final cardBgColor =
-        isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF3F4F6);
-    final borderColor =
-        isDark ? Colors.grey.shade800 : Colors.grey.shade400;
-    final titleColor = isDark ? Colors.white : Colors.black87;
-    final itemTextColor = isDark ? Colors.white70 : Colors.black87;
+    final titleColor = isDark ? Colors.white : const Color(0xFF0F172A);
+    final subtitleColor =
+        isDark ? Colors.white.withValues(alpha: 0.76) : const Color(0xFF334155);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -298,26 +300,32 @@ class _AkunScreenState extends State<AkunScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
+                // Kartu Profil Liquid Glass
+                LiquidGlassSurface(
                   width: double.infinity,
+                  borderRadius: 24,
+                  blurSigma: 18,
+                  tintColor: primaryBlue,
                   padding: const EdgeInsets.symmetric(
                     horizontal: 18,
                     vertical: 18,
-                  ),
-                  decoration: BoxDecoration(
-                    color: primaryBlue,
-                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Row(
                     children: [
                       Container(
                         width: 78,
                         height: 78,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFD1D5DB),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.14)
+                              : Colors.white.withValues(alpha: 0.85),
                           shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.6),
+                            width: 1.5,
+                          ),
                         ),
-                        child: _buildProfileAvatar(photoUrl),
+                        child: _buildProfileAvatar(photoUrl, accentBlue),
                       ),
                       const SizedBox(width: 18),
                       Expanded(
@@ -331,7 +339,7 @@ class _AkunScreenState extends State<AkunScreen> {
                               style: GoogleFonts.montserrat(
                                 fontSize: 17,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: titleColor,
                               ),
                             ),
                             const SizedBox(height: 3),
@@ -341,10 +349,10 @@ class _AkunScreenState extends State<AkunScreen> {
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontSize: 12.5,
-                                color: Colors.white.withValues(alpha: 0.9),
+                                color: subtitleColor,
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            const SizedBox(height: 10),
                             InkWell(
                               onTap: () => _openEditProfileScreen(
                                 currentName: displayName,
@@ -352,27 +360,37 @@ class _AkunScreenState extends State<AkunScreen> {
                                 currentPhotoUrl: photoUrl,
                                 email: email,
                               ),
-                              borderRadius: BorderRadius.circular(6),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 2),
+                              borderRadius: BorderRadius.circular(10),
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 10,
+                                  vertical: 5,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: primaryBlue.withValues(
+                                    alpha: isDark ? 0.30 : 0.12,
+                                  ),
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: accentBlue.withValues(alpha: 0.3),
+                                  ),
+                                ),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
                                       'Edit Profile',
                                       style: TextStyle(
-                                        fontSize: 12.5,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.white
-                                            .withValues(alpha: 0.95),
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w600,
+                                        color: accentBlue,
                                       ),
                                     ),
                                     const SizedBox(width: 6),
-                                    const Icon(
+                                    Icon(
                                       Icons.edit_outlined,
-                                      size: 15,
-                                      color: Colors.white,
+                                      size: 14,
+                                      color: accentBlue,
                                     ),
                                   ],
                                 ),
@@ -396,34 +414,30 @@ class _AkunScreenState extends State<AkunScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                // Button ekspor laporan pdf
                 _buildMenuTile(
                   icon: Icons.picture_as_pdf_outlined,
                   label: 'Ekspor Laporan PDF',
-                  cardBgColor: cardBgColor,
-                  borderColor: borderColor,
-                  textColor: itemTextColor,
+                  textColor: titleColor,
+                  iconColor: accentBlue,
                   onTap: () => _openExportPdfScreen(
                     ownerName: displayName,
                     ownerEmail: email,
                   ),
                   trailing: Icon(
                     Icons.chevron_right_rounded,
-                    color: itemTextColor,
+                    color: subtitleColor,
                     size: 22,
                   ),
                 ),
                 const SizedBox(height: 10),
 
-                // button tampilan mode gelap / terang
                 _buildMenuTile(
                   icon: isDark
                       ? Icons.dark_mode_outlined
                       : Icons.wb_sunny_outlined,
                   label: 'Tampilan',
-                  cardBgColor: cardBgColor,
-                  borderColor: borderColor,
-                  textColor: itemTextColor,
+                  textColor: titleColor,
+                  iconColor: accentBlue,
                   onTap: () => setAppTheme(!isDark),
                   trailing: SizedBox(
                     height: 28,
@@ -447,52 +461,45 @@ class _AkunScreenState extends State<AkunScreen> {
                 ),
                 const SizedBox(height: 10),
 
-                // Button ubah password
                 _buildMenuTile(
                   icon: Icons.settings_outlined,
                   label: 'Ubah Password',
-                  cardBgColor: cardBgColor,
-                  borderColor: borderColor,
-                  textColor: itemTextColor,
+                  textColor: titleColor,
+                  iconColor: accentBlue,
                   onTap: _openChangePasswordScreen,
                   trailing: Icon(
                     Icons.chevron_right_rounded,
-                    color: itemTextColor,
+                    color: subtitleColor,
                     size: 22,
                   ),
                 ),
                 const SizedBox(height: 36),
 
-                InkWell(
+                LiquidGlassSurface(
+                  width: double.infinity,
+                  height: 54,
+                  borderRadius: 16,
+                  blurSigma: 14,
+                  tintColor: const Color(0xFFEF4444),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   onTap: _confirmLogout,
-                  borderRadius: BorderRadius.circular(14),
-                  child: Container(
-                    width: double.infinity,
-                    height: 52,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: cardBgColor,
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: borderColor, width: 1.1),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.logout_rounded,
-                          color: Color(0xFFEF4444),
-                          size: 21,
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.logout_rounded,
+                        color: Color(0xFFEF4444),
+                        size: 21,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        'Logout',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 14.5,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFFEF4444),
                         ),
-                        const SizedBox(width: 12),
-                        Text(
-                          'Logout',
-                          style: GoogleFonts.montserrat(
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.bold,
-                            color: const Color(0xFFEF4444),
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
               ],
@@ -506,41 +513,34 @@ class _AkunScreenState extends State<AkunScreen> {
   Widget _buildMenuTile({
     required IconData icon,
     required String label,
-    required Color cardBgColor,
-    required Color borderColor,
     required Color textColor,
+    required Color iconColor,
     required VoidCallback onTap,
     required Widget trailing,
   }) {
-    return InkWell(
+    return LiquidGlassSurface(
+      width: double.infinity,
+      height: 54,
+      borderRadius: 16,
+      blurSigma: 14,
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       onTap: onTap,
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        width: double.infinity,
-        height: 52,
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          color: cardBgColor,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: borderColor, width: 1.1),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 21, color: textColor),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: textColor,
-                ),
+      child: Row(
+        children: [
+          Icon(icon, size: 21, color: iconColor),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: textColor,
               ),
             ),
-            trailing,
-          ],
-        ),
+          ),
+          trailing,
+        ],
       ),
     );
   }

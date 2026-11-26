@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import '../utils/top_notif.dart';
 
 class EditProfilScreen extends StatefulWidget {
@@ -88,7 +90,6 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
 
   void _showPhotoOptionsSheet() {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final sheetBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black87;
     final iconBg = isDark
         ? const Color(0xFF004AAD).withValues(alpha: 0.25)
@@ -99,117 +100,119 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: sheetBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: LiquidGlassSurface(
+            borderRadius: 24,
+            blurSigma: 22,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                Text(
-                  'Ganti Foto Profil',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
+                      color:
+                          isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
                     ),
-                    // icon kamera
-                    child: Icon(Icons.camera_alt_outlined, color: iconColor),
                   ),
-                  title: Text(
-                    'Ambil Foto dari Kamera',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                  Text(
+                    'Ganti Foto Profil',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: textPrimary,
                     ),
                   ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickImage(ImageSource.camera);
-                  },
-                ),
-                const SizedBox(height: 6),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: iconBg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(Icons.camera_alt_outlined, color: iconColor),
                     ),
-                    // icon foto galeri
-                    child: Icon(Icons.photo_library_outlined, color: iconColor),
-                  ),
-                  title: Text(
-                    'Pilih dari Galeri',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: textPrimary,
+                    title: Text(
+                      'Ambil Foto dari Kamera',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: textPrimary,
+                      ),
                     ),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _pickImage(ImageSource.camera);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickImage(ImageSource.gallery);
-                  },
-                ),
-                if (hasPhoto) ...[
                   const SizedBox(height: 6),
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.red.withValues(alpha: 0.2)
-                            : Colors.red.shade50,
+                        color: iconBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      // icon hapus
-                      child: Icon(
-                        Icons.delete_outline,
-                        color: Colors.red.shade400,
-                      ),
+                      child:
+                          Icon(Icons.photo_library_outlined, color: iconColor),
                     ),
                     title: Text(
-                      'Hapus Foto Profil',
+                      'Pilih dari Galeri',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: Colors.red.shade400,
+                        color: textPrimary,
                       ),
                     ),
                     onTap: () {
                       Navigator.pop(sheetContext);
-                      setState(() {
-                        _newImageFile = null;
-                        _currentPhotoUrl = '';
-                      });
+                      _pickImage(ImageSource.gallery);
                     },
                   ),
+                  if (hasPhoto) ...[
+                    const SizedBox(height: 6),
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.red.withValues(alpha: 0.2)
+                              : Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      title: Text(
+                        'Hapus Foto Profil',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        setState(() {
+                          _newImageFile = null;
+                          _currentPhotoUrl = '';
+                        });
+                      },
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );
@@ -224,60 +227,76 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool? shouldLeave = await showDialog<bool>(
+    final bool? shouldLeave = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Perubahan Belum Disimpan',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              // button edit
-              Row(
+      barrierLabel: 'Perubahan Belum Disimpan',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
+                  Text(
+                    'Perubahan Belum Disimpan',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Anda memiliki perubahan yang belum disimpan. Apakah Anda yakin ingin keluar tanpa menyimpan?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFF004AAD),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Lanjutkan Edit',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Lanjutkan Edit',
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Keluar',
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -287,44 +306,11 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-
-                  // button keluar
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Keluar',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -411,7 +397,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
               width: 112,
               height: 112,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+              errorBuilder: (_, _, _) => const SizedBox.shrink(),
             ),
           );
         } catch (_) {
@@ -425,7 +411,7 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
           width: 112,
           height: 112,
           fit: BoxFit.cover,
-          errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          errorBuilder: (_, _, _) => const SizedBox.shrink(),
         ),
       );
     }
@@ -433,34 +419,14 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
     return const SizedBox.shrink();
   }
 
-  InputDecoration _inputDecoration({
-    required String hint,
-    required bool isDark,
-    bool readOnly = false,
-  }) {
-    final fillColor = isDark
-        ? (readOnly ? const Color(0xFF181818) : const Color(0xFF1E1E1E))
-        : (readOnly ? const Color(0xFFECEEF1) : const Color(0xFFF3F4F6));
-    final borderColor =
-        isDark ? Colors.grey.shade800 : Colors.grey.shade400;
-
+  InputDecoration _glassInputDecoration(String hint) {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(fontSize: 13.5, color: Colors.grey.shade500),
-      filled: true,
-      fillColor: fillColor,
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(
-          color: readOnly ? borderColor : const Color(0xFF004AAD),
-          width: readOnly ? 1.0 : 1.4,
-        ),
-      ),
     );
   }
 
@@ -468,8 +434,6 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
     final textPrimary = isDark ? Colors.white : Colors.black87;
     final textSecondary =
         isDark ? Colors.grey.shade400 : Colors.grey.shade700;
@@ -481,150 +445,138 @@ class _EditProfilScreenState extends State<EditProfilScreen> {
         if (didPop) return;
         await _handleBackPress();
       },
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            onPressed: _isSaving ? null : _handleBackPress,
-            icon: Icon(Icons.arrow_back, color: textPrimary),
-          ),
-          // button edit profile
-          title: Text(
-            'Edit Profile',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
+      child: LiquidGlassBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              onPressed: _isSaving ? null : _handleBackPress,
+              icon: Icon(Icons.arrow_back, color: textPrimary),
+            ),
+            title: Text(
+              'Edit Profile',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textPrimary,
+              ),
             ),
           ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Column(
-                    children: [
-                      GestureDetector(
-                        onTap: _isSaving ? null : _showPhotoOptionsSheet,
-                        child: Container(
-                          width: 112,
-                          height: 112,
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? const Color(0xFF374151)
-                                : const Color(0xFFD1D5DB),
-                            shape: BoxShape.circle,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Center(
+                    child: Column(
+                      children: [
+                        LiquidGlassSurface(
+                          width: 116,
+                          height: 116,
+                          borderRadius: 58,
+                          blurSigma: 14,
+                          padding: const EdgeInsets.all(2),
+                          onTap: _isSaving ? null : _showPhotoOptionsSheet,
+                          child: Container(
+                            width: 112,
+                            height: 112,
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? const Color(0xFF374151)
+                                  : const Color(0xFFD1D5DB),
+                              shape: BoxShape.circle,
+                            ),
+                            child: _buildAvatarContent(),
                           ),
-                          child: _buildAvatarContent(),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      GestureDetector(
-                        onTap: _isSaving ? null : _showPhotoOptionsSheet,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 2),
-                          child: Text(
-                            'Klik untuk mengganti Foto',
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: FontWeight.w500,
-                              color: linkBlue,
-                              decoration: TextDecoration.underline,
-                              decorationColor: linkBlue,
+                        const SizedBox(height: 10),
+                        GestureDetector(
+                          onTap: _isSaving ? null : _showPhotoOptionsSheet,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 2),
+                            child: Text(
+                              'Klik untuk mengganti Foto',
+                              style: TextStyle(
+                                fontSize: 12.5,
+                                fontWeight: FontWeight.w500,
+                                color: linkBlue,
+                                decoration: TextDecoration.underline,
+                                decorationColor: linkBlue,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(height: 28),
-
-                Text(
-                  'Nama Lengkap',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
+                  const SizedBox(height: 28),
+                  Text(
+                    'Nama Lengkap',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-
-                // field nama lengkap
-                TextField(
-                  controller: _nameController,
-                  enabled: !_isSaving,
-                  style: TextStyle(fontSize: 14, color: textSecondary),
-                  decoration: _inputDecoration(
-                    hint: 'Masukkan nama lengkap...',
-                    isDark: isDark,
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _nameController,
+                      enabled: !_isSaving,
+                      style: TextStyle(fontSize: 14, color: textPrimary),
+                      decoration:
+                          _glassInputDecoration('Masukkan nama lengkap...'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-
-                // field email
-                Text(
-                  'Email',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 13.5,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
+                  const SizedBox(height: 16),
+                  Text(
+                    'Email',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 13.5,
+                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _emailController,
-                  readOnly: true,
-                  style: TextStyle(fontSize: 14, color: textSecondary),
-                  decoration: _inputDecoration(
-                    hint: 'Email akun...',
-                    isDark: isDark,
-                    readOnly: true,
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    tintColor: Colors.grey,
+                    child: TextField(
+                      controller: _emailController,
+                      readOnly: true,
+                      style: TextStyle(fontSize: 14, color: textSecondary),
+                      decoration: _glassInputDecoration('Email akun...'),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
-        bottomNavigationBar: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-            child: SizedBox(
-              width: double.infinity,
-              height: 52,
-              child: ElevatedButton(
+          bottomNavigationBar: SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              child: LiquidGlassButton(
+                width: double.infinity,
+                height: 52,
+                borderRadius: 16,
+                tintColor: primaryBlue,
+                isLoading: _isSaving,
                 onPressed: _isSaving ? null : _saveProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryBlue,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                child: Text(
+                  'Perbarui',
+                  style: GoogleFonts.montserrat(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-                child: _isSaving
-                    ? const SizedBox(
-                        width: 22,
-                        height: 22,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2.5,
-                        ),
-                      )
-                    : Text(
-                        'Perbarui',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
               ),
             ),
           ),

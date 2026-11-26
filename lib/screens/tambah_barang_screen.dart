@@ -6,8 +6,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../services/asset_service.dart';
-import '../utils/top_notif.dart';
 import '../utils/custom_app_dropdown.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
+import '../utils/top_notif.dart';
 
 class TambahBarangScreen extends StatefulWidget {
   const TambahBarangScreen({super.key});
@@ -125,7 +127,6 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
   void _showImageSourceSheet() {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final sheetBg = isDark ? theme.colorScheme.surface : Colors.white;
     final textPrimary = theme.colorScheme.onSurface;
     final iconBg = isDark
         ? const Color(0xFF004AAD).withValues(alpha: 0.25)
@@ -135,135 +136,139 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: sheetBg,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
+      backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+          child: LiquidGlassSurface(
+            borderRadius: 24,
+            blurSigma: 22,
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: isDark ? Colors.grey.shade700 : Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                Text(
-                  'Pilih Sumber Foto',
-                  style: GoogleFonts.montserrat(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
+            child: SafeArea(
+              top: false,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 16),
                     decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.camera_alt_outlined,
-                      color: iconColor,
+                      color:
+                          isDark ? Colors.grey.shade600 : Colors.grey.shade400,
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  title: Text(
-                    'Ambil Foto dari Kamera',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
+                  Text(
+                    'Pilih Sumber Foto',
+                    style: GoogleFonts.montserrat(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
                       color: textPrimary,
                     ),
                   ),
-                  subtitle: Text(
-                    'Gunakan kamera perangkat untuk memotret barang',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
+                  const SizedBox(height: 16),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: iconBg,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Icon(
+                        Icons.camera_alt_outlined,
+                        color: iconColor,
+                      ),
                     ),
+                    title: Text(
+                      'Ambil Foto dari Kamera',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Gunakan kamera perangkat untuk memotret barang',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
+                      ),
+                    ),
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _pickImage(ImageSource.camera);
+                    },
                   ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickImage(ImageSource.camera);
-                  },
-                ),
-                const SizedBox(height: 6),
-                ListTile(
-                  leading: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: iconBg,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Icon(
-                      Icons.photo_library_outlined,
-                      color: iconColor,
-                    ),
-                  ),
-                  title: Text(
-                    'Pilih dari Galeri',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: textPrimary,
-                    ),
-                  ),
-                  subtitle: Text(
-                    'Pilih foto barang yang sudah tersimpan di HP',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark
-                          ? Colors.grey.shade400
-                          : Colors.grey.shade600,
-                    ),
-                  ),
-                  onTap: () {
-                    Navigator.pop(sheetContext);
-                    _pickImage(ImageSource.gallery);
-                  },
-                ),
-                if (_selectedImage != null) ...[
                   const SizedBox(height: 6),
                   ListTile(
                     leading: Container(
                       padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: isDark
-                            ? Colors.red.withValues(alpha: 0.2)
-                            : Colors.red.shade50,
+                        color: iconBg,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
-                        Icons.delete_outline,
-                        color: Colors.red.shade400,
+                        Icons.photo_library_outlined,
+                        color: iconColor,
                       ),
                     ),
                     title: Text(
-                      'Hapus Foto Terpilih',
+                      'Pilih dari Galeri',
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
-                        color: Colors.red.shade400,
+                        color: textPrimary,
+                      ),
+                    ),
+                    subtitle: Text(
+                      'Pilih foto barang yang sudah tersimpan di HP',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.grey.shade400
+                            : Colors.grey.shade600,
                       ),
                     ),
                     onTap: () {
                       Navigator.pop(sheetContext);
-                      setState(() => _selectedImage = null);
+                      _pickImage(ImageSource.gallery);
                     },
                   ),
+                  if (_selectedImage != null) ...[
+                    const SizedBox(height: 6),
+                    ListTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.red.withValues(alpha: 0.2)
+                              : Colors.red.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(
+                          Icons.delete_outline,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      title: Text(
+                        'Hapus Foto Terpilih',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                          color: Colors.red.shade400,
+                        ),
+                      ),
+                      onTap: () {
+                        Navigator.pop(sheetContext);
+                        setState(() => _selectedImage = null);
+                      },
+                    ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         );
@@ -279,108 +284,92 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
 
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final dialogBg = isDark ? const Color(0xFF1E1E1E) : Colors.white;
     final textPrimary = isDark ? Colors.white : Colors.black;
 
-    final bool? shouldLeave = await showDialog<bool>(
+    final bool? shouldLeave = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: dialogBg,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Perubahan Belum Disimpan',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 19,
-                  fontWeight: FontWeight.bold,
-                  color: textPrimary,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Anda memiliki perubahan yang belum disimpan,\nApakah Anda yakin ingin keluar tanpa menyimpan?',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Perubahan Belum Disimpan',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(dialogContext, false),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF004AAD),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        minimumSize: const Size(0, 44),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                      child: const FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(
-                          'Lanjutkan Edit',
-                          maxLines: 1,
-                          softWrap: false,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                  Text(
+                    'Perubahan Belum Disimpan',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 19,
+                      fontWeight: FontWeight.bold,
+                      color: textPrimary,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Anda memiliki perubahan yang belum disimpan,\nApakah Anda yakin ingin keluar tanpa menyimpan?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFF004AAD),
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Lanjutkan Edit',
+                              maxLines: 1,
+                              softWrap: false,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => Navigator.pop(dialogContext, true),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: isDark
-                            ? const Color(0xFF60A5FA)
-                            : const Color(0xFF004AAD),
-                        side: const BorderSide(
-                          color: Color(0xFF64A1F4),
-                          width: 1.2,
-                        ),
-                        minimumSize: const Size(0, 44),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 12,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: const Text(
+                            'Keluar',
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                         ),
                       ),
-                      child: const Text(
-                        'Keluar',
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -394,7 +383,7 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
   String _formatTanggalIndo(DateTime date) {
     return '${date.day} ${_bulanSingkat[date.month - 1]} ${date.year}';
   }
-  
+
   String _formatRibuan(String digits) {
     final buffer = StringBuffer();
     for (int i = 0; i < digits.length; i++) {
@@ -538,40 +527,21 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
     }
   }
 
-  InputDecoration _inputDecoration(
+  InputDecoration _glassInputDecoration(
     String hint, {
     Widget? prefixIcon,
-    required Color fillColor,
-    required Color borderColor,
   }) {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(fontSize: 13, color: Colors.grey.shade500),
       prefixIcon: prefixIcon,
       prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-      filled: true,
-      fillColor: fillColor,
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      errorBorder: InputBorder.none,
+      focusedErrorBorder: InputBorder.none,
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF004AAD), width: 1.4),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.2),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.redAccent, width: 1.5),
-      ),
     );
   }
 
@@ -582,12 +552,6 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
     const primaryBlue = Color(0xFF004AAD);
     final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
 
-    final bgColor = theme.scaffoldBackgroundColor;
-    final fieldFillColor = isDark ? theme.colorScheme.surface : Colors.white;
-    final disabledFillColor =
-        isDark ? Colors.grey.shade900 : const Color(0xFFE5E7EB);
-    final borderColor =
-        isDark ? Colors.grey.shade700 : const Color(0xFFD6D6D6);
     final textPrimary = theme.colorScheme.onSurface;
     final textSecondary = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
 
@@ -600,73 +564,62 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
         if (didPop) return;
         await _handleBackPress();
       },
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: textPrimary),
-            onPressed: _isSaving ? null : _handleBackPress,
-          ),
-          title: Text(
-            'Tambah Barang Baru',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
+      child: LiquidGlassBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: textPrimary),
+              onPressed: _isSaving ? null : _handleBackPress,
+            ),
+            title: Text(
+              'Tambah Barang Baru',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textPrimary,
+              ),
             ),
           ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 10, 20, 28),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  InkWell(
-                    onTap: _isSaving ? null : _showImageSourceSheet,
-                    borderRadius: BorderRadius.circular(14),
-                    child: Container(
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 28),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    LiquidGlassSurface(
                       width: double.infinity,
                       height: _selectedImage != null ? 190 : null,
+                      borderRadius: 16,
+                      blurSigma: 14,
                       padding: _selectedImage != null
                           ? EdgeInsets.zero
                           : const EdgeInsets.symmetric(vertical: 22),
-                      decoration: BoxDecoration(
-                        color: fieldFillColor,
-                        borderRadius: BorderRadius.circular(14),
-                        border: Border.all(
-                          color: borderColor,
-                          width: 1,
-                        ),
-                      ),
+                      onTap: _isSaving ? null : _showImageSourceSheet,
                       child: _selectedImage != null
                           ? Stack(
                               fit: StackFit.expand,
                               children: [
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(13),
-                                  child: Image.file(
-                                    _selectedImage!,
-                                    fit: BoxFit.cover,
-                                  ),
+                                Image.file(
+                                  _selectedImage!,
+                                  fit: BoxFit.cover,
                                 ),
                                 Positioned(
                                   right: 10,
                                   bottom: 10,
-                                  child: Container(
+                                  child: LiquidGlassSurface(
+                                    borderRadius: 20,
+                                    blurSigma: 14,
+                                    tintColor: Colors.black,
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 12,
                                       vertical: 6,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.65),
-                                      borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -718,88 +671,86 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
                               ],
                             ),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  Text(
-                    'Nama Barang',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
+                    const SizedBox(height: 18),
+                    Text(
+                      'Nama Barang',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _nameController,
-                    style: TextStyle(fontSize: 13.5, color: textPrimary),
-                    validator: (val) => (val == null || val.trim().isEmpty)
-                        ? 'Nama barang wajib diisi'
-                        : null,
-                    decoration: _inputDecoration(
-                      'Masukkan nama barang...',
-                      fillColor: fieldFillColor,
-                      borderColor: borderColor,
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      child: TextFormField(
+                        controller: _nameController,
+                        style: TextStyle(fontSize: 13.5, color: textPrimary),
+                        validator: (val) => (val == null || val.trim().isEmpty)
+                            ? 'Nama barang wajib diisi'
+                            : null,
+                        decoration:
+                            _glassInputDecoration('Masukkan nama barang...'),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Pilih Kategori',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
+                    const SizedBox(height: 16),
+                    Text(
+                      'Pilih Kategori',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  CustomAppDropdown(
-                    value: _selectedCategory,
-                    items: _categories,
-                    hint: 'Pilih Kategori Barang...',
-                    enabled: !_isSaving,
-                    fillColor: fieldFillColor,
-                    borderColor: borderColor,
-                    textStyle: TextStyle(fontSize: 13.5, color: textPrimary),
-                    onChanged: (val) => setState(() => _selectedCategory = val),
-                  ),
-                  const SizedBox(height: 16),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Tanggal Pembelian',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.bold,
-                                color: isRegularDisabled
-                                    ? Colors.grey.shade500
-                                    : textPrimary,
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      child: CustomAppDropdown(
+                        value: _selectedCategory,
+                        items: _categories,
+                        hint: 'Pilih Kategori Barang...',
+                        enabled: !_isSaving,
+                        fillColor: Colors.transparent,
+                        borderColor: Colors.transparent,
+                        textStyle: TextStyle(fontSize: 13.5, color: textPrimary),
+                        onChanged: (val) =>
+                            setState(() => _selectedCategory = val),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          flex: 6,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Tanggal Pembelian',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: isRegularDisabled
+                                      ? Colors.grey.shade500
+                                      : textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            InkWell(
-                              onTap: isRegularDisabled
-                                  ? null
-                                  : () => _pickDate(isSecondHand: false),
-                              borderRadius: BorderRadius.circular(12),
-                              child: Container(
+                              const SizedBox(height: 6),
+                              LiquidGlassSurface(
+                                borderRadius: 14,
+                                blurSigma: 14,
+                                tintColor:
+                                    isRegularDisabled ? Colors.grey : null,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 12,
                                   vertical: 14,
                                 ),
-                                decoration: BoxDecoration(
-                                  color: isRegularDisabled
-                                      ? disabledFillColor
-                                      : fieldFillColor,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: borderColor,
-                                  ),
-                                ),
+                                onTap: isRegularDisabled
+                                    ? null
+                                    : () => _pickDate(isSecondHand: false),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -847,134 +798,134 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
                                   ],
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        flex: 4,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Harga Beli',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 13.5,
-                                fontWeight: FontWeight.bold,
-                                color: textPrimary,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 4,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Harga Beli',
+                                style: GoogleFonts.montserrat(
+                                  fontSize: 13.5,
+                                  fontWeight: FontWeight.bold,
+                                  color: textPrimary,
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 6),
-                            TextFormField(
-                              controller: _priceController,
-                              keyboardType: TextInputType.number,
-                              style:
-                                  TextStyle(fontSize: 13, color: textPrimary),
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly,
-                                _RibuanFormatter(),
-                              ],
-                              validator: (val) =>
-                                  (val == null || val.trim().isEmpty)
-                                      ? 'Wajib diisi'
-                                      : null,
-                              decoration: _inputDecoration(
-                                '0',
-                                prefixIcon: Padding(
-                                  padding: const EdgeInsets.only(
-                                    left: 14,
-                                    right: 4,
-                                  ),
-                                  child: Text(
-                                    'Rp',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      color: textPrimary,
+                              const SizedBox(height: 6),
+                              LiquidGlassSurface(
+                                borderRadius: 14,
+                                blurSigma: 14,
+                                child: TextFormField(
+                                  controller: _priceController,
+                                  keyboardType: TextInputType.number,
+                                  style: TextStyle(
+                                      fontSize: 13, color: textPrimary),
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.digitsOnly,
+                                    _RibuanFormatter(),
+                                  ],
+                                  validator: (val) =>
+                                      (val == null || val.trim().isEmpty)
+                                          ? 'Wajib diisi'
+                                          : null,
+                                  decoration: _glassInputDecoration(
+                                    '0',
+                                    prefixIcon: Padding(
+                                      padding: const EdgeInsets.only(
+                                        left: 14,
+                                        right: 4,
+                                      ),
+                                      child: Text(
+                                        'Rp',
+                                        style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w600,
+                                          color: textPrimary,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
-                                fillColor: fieldFillColor,
-                                borderColor: borderColor,
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Kondisi Barang',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
                       ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Kondisi Barang',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  CustomAppDropdown(
-                    value: _selectedCondition,
-                    items: _conditionOptions,
-                    hint: 'Pilih Kondisi Barang...',
-                    enabled: !_isSaving,
-                    fillColor: fieldFillColor,
-                    borderColor: borderColor,
-                    textStyle: TextStyle(fontSize: 13.5, color: textPrimary),
-                    onChanged: (val) =>
-                        setState(() => _selectedCondition = val),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Rincian Kondisi Barang',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      child: CustomAppDropdown(
+                        value: _selectedCondition,
+                        items: _conditionOptions,
+                        hint: 'Pilih Kondisi Barang...',
+                        enabled: !_isSaving,
+                        fillColor: Colors.transparent,
+                        borderColor: Colors.transparent,
+                        textStyle: TextStyle(fontSize: 13.5, color: textPrimary),
+                        onChanged: (val) =>
+                            setState(() => _selectedCondition = val),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _conditionDetailController,
-                    maxLines: 3,
-                    minLines: 2,
-                    style: TextStyle(fontSize: 13.5, color: textPrimary),
-                    decoration: _inputDecoration(
-                      _getConditionDetailHint(),
-                      fillColor: fieldFillColor,
-                      borderColor: borderColor,
+                    const SizedBox(height: 16),
+                    Text(
+                      'Rincian Kondisi Barang',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Tanggal Pembelian (Barang Second)',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: isSecondHandDisabled
-                          ? Colors.grey.shade500
-                          : textPrimary,
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      child: TextFormField(
+                        controller: _conditionDetailController,
+                        maxLines: 3,
+                        minLines: 2,
+                        style: TextStyle(fontSize: 13.5, color: textPrimary),
+                        decoration:
+                            _glassInputDecoration(_getConditionDetailHint()),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  InkWell(
-                    onTap: isSecondHandDisabled
-                        ? null
-                        : () => _pickDate(isSecondHand: true),
-                    borderRadius: BorderRadius.circular(12),
-                    child: Container(
+                    const SizedBox(height: 16),
+                    Text(
+                      'Tanggal Pembelian (Barang Second)',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: isSecondHandDisabled
+                            ? Colors.grey.shade500
+                            : textPrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      tintColor: isSecondHandDisabled ? Colors.grey : null,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,
                         vertical: 14,
                       ),
-                      decoration: BoxDecoration(
-                        color: isSecondHandDisabled
-                            ? disabledFillColor
-                            : fieldFillColor,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: borderColor),
-                      ),
+                      onTap: isSecondHandDisabled
+                          ? null
+                          : () => _pickDate(isSecondHand: true),
                       child: Row(
                         children: [
                           Expanded(
@@ -1018,61 +969,47 @@ class _TambahBarangScreenState extends State<TambahBarangScreen> {
                         ],
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Catatan Tambahan (Opsional)',
-                    style: GoogleFonts.montserrat(
-                      fontSize: 13.5,
-                      fontWeight: FontWeight.bold,
-                      color: textPrimary,
+                    const SizedBox(height: 16),
+                    Text(
+                      'Catatan Tambahan (Opsional)',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 13.5,
+                        fontWeight: FontWeight.bold,
+                        color: textPrimary,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 6),
-                  TextFormField(
-                    controller: _notesController,
-                    maxLines: 3,
-                    minLines: 2,
-                    style: TextStyle(fontSize: 13.5, color: textPrimary),
-                    decoration: _inputDecoration(
-                      'Masukkan Catatan Tambahan (opsional)...',
-                      fillColor: fieldFillColor,
-                      borderColor: borderColor,
-                    ),
-                  ),
-                  const SizedBox(height: 28),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: _isSaving ? null : _saveAsset,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryBlue,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
+                    const SizedBox(height: 6),
+                    LiquidGlassSurface(
+                      borderRadius: 14,
+                      blurSigma: 14,
+                      child: TextFormField(
+                        controller: _notesController,
+                        maxLines: 3,
+                        minLines: 2,
+                        style: TextStyle(fontSize: 13.5, color: textPrimary),
+                        decoration: _glassInputDecoration(
+                          'Masukkan Catatan Tambahan (opsional)...',
                         ),
                       ),
-                      child: _isSaving
-                          ? const SizedBox(
-                              height: 20,
-                              width: 20,
-                              child: CircularProgressIndicator(
-                                color: Colors.white,
-                                strokeWidth: 2.5,
-                              ),
-                            )
-                          : Text(
-                              'Tambah Barang',
-                              style: GoogleFonts.montserrat(
-                                fontSize: 15,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
                     ),
-                  ),
-                ],
+                    const SizedBox(height: 28),
+                    LiquidGlassButton(
+                      width: double.infinity,
+                      borderRadius: 16,
+                      tintColor: primaryBlue,
+                      isLoading: _isSaving,
+                      onPressed: _isSaving ? null : _saveAsset,
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                      child: Text(
+                        'Tambah Barang',
+                        style: GoogleFonts.montserrat(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

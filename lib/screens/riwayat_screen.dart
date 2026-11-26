@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/asset_service.dart';
+import '../utils/liquid_glass_kit.dart';
 import 'edit_riwayat_screen.dart';
 
 class RiwayatScreen extends StatefulWidget {
@@ -90,7 +91,6 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
       addMonth(dt);
     }
 
-    // Urutkan kronologis dari bulan lalu (atas) ke bulan terbaru (bawah)
     result.sort((a, b) => a.compareTo(b));
     return result;
   }
@@ -163,22 +163,18 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     const primaryBlue = Color(0xFF004AAD);
 
-    final bgColor = theme.scaffoldBackgroundColor;
-    final cardColor = isDark ? theme.colorScheme.surface : Colors.white;
-    final textPrimary = theme.colorScheme.onSurface;
-    final textSecondary = isDark ? Colors.grey.shade400 : Colors.grey.shade600;
-    final borderColor = isDark ? Colors.grey.shade800 : Colors.grey.shade300;
-    final chipBorderUnselected =
-        isDark ? Colors.grey.shade700 : Colors.grey.shade400;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
+    final textSecondary =
+        isDark ? Colors.white.withValues(alpha: 0.72) : const Color(0xFF475569);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -252,78 +248,87 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Kartu Biru Ringkasan Pengeluaran
+              // Kartu Ringkasan Pengeluaran Liquid Glass
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 6, 16, 18),
-                child: Container(
+                child: LiquidGlassSurface(
                   width: double.infinity,
+                  borderRadius: 22,
+                  blurSigma: 18,
+                  tintColor: primaryBlue,
                   padding: const EdgeInsets.fromLTRB(18, 16, 16, 22),
-                  decoration: BoxDecoration(
-                    color: primaryBlue,
-                    borderRadius: BorderRadius.circular(18),
-                    boxShadow: [
-                      BoxShadow(
-                        color: primaryBlue.withValues(alpha: isDark ? 0.35 : 0.22),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               'Total Pengeluaran bulan ini',
                               style: TextStyle(
                                 fontSize: 12.5,
-                                color: Colors.white,
-                                fontWeight: FontWeight.w500,
+                                color: textSecondary,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
                           ),
-                          DropdownButtonHideUnderline(
-                            child: DropdownButton<DateTime>(
-                              value: monthOptions.firstWhere(
-                                (m) =>
-                                    m.year == _selectedMonthYear.year &&
-                                    m.month == _selectedMonthYear.month,
-                              ),
-                              menuMaxHeight: 380,
-                              itemHeight: 48,
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.14)
+                                  : Colors.white.withValues(alpha: 0.85),
                               borderRadius: BorderRadius.circular(14),
-                              dropdownColor: primaryBlue,
-                              icon: const Icon(
-                                Icons.keyboard_arrow_down_rounded,
-                                color: Colors.white,
-                                size: 20,
+                              border: Border.all(
+                                color: accentBlue.withValues(alpha: 0.25),
                               ),
-                              isDense: true,
-                              style: const TextStyle(
-                                fontSize: 12.5,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
-                              items: monthOptions.map((monthDate) {
-                                return DropdownMenuItem<DateTime>(
-                                  value: monthDate,
-                                  child: Text(
-                                    _formatBulanTahun(monthDate),
-                                    style: const TextStyle(
-                                      fontSize: 12.5,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<DateTime>(
+                                value: monthOptions.firstWhere(
+                                  (m) =>
+                                      m.year == _selectedMonthYear.year &&
+                                      m.month == _selectedMonthYear.month,
+                                ),
+                                menuMaxHeight: 380,
+                                itemHeight: 48,
+                                borderRadius: BorderRadius.circular(16),
+                                dropdownColor: isDark
+                                    ? const Color(0xFF14213D)
+                                    : const Color(0xFFF0F6FF),
+                                icon: Icon(
+                                  Icons.keyboard_arrow_down_rounded,
+                                  color: accentBlue,
+                                  size: 20,
+                                ),
+                                isDense: true,
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: accentBlue,
+                                ),
+                                items: monthOptions.map((monthDate) {
+                                  return DropdownMenuItem<DateTime>(
+                                    value: monthDate,
+                                    child: Text(
+                                      _formatBulanTahun(monthDate),
+                                      style: TextStyle(
+                                        fontSize: 12.5,
+                                        fontWeight: FontWeight.w600,
+                                        color: textPrimary,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              }).toList(),
-                              onChanged: (val) {
-                                if (val != null) {
-                                  setState(() => _selectedMonthYear = val);
-                                }
-                              },
+                                  );
+                                }).toList(),
+                                onChanged: (val) {
+                                  if (val != null) {
+                                    setState(() => _selectedMonthYear = val);
+                                  }
+                                },
+                              ),
                             ),
                           ),
                         ],
@@ -333,8 +338,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                         _formatRupiah(totalMonthlySpend),
                         style: GoogleFonts.montserrat(
                           fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                          fontWeight: FontWeight.w800,
+                          color: textPrimary,
                         ),
                       ),
                     ],
@@ -356,7 +361,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
               ),
               const SizedBox(height: 10),
 
-              // Filter Chips Horizontal Scrollable
+              // Filter Chips Liquid Glass
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -365,36 +370,27 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                     final isSelected = _selectedFilter == filter;
                     return Padding(
                       padding: const EdgeInsets.only(right: 8),
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
+                      child: LiquidGlassSurface(
+                        borderRadius: 20,
+                        blurSigma: 12,
+                        enableShadow: isSelected,
+                        tintColor: isSelected ? primaryBlue : null,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 8,
+                        ),
                         onTap: () {
                           if (_selectedFilter != filter) {
                             setState(() => _selectedFilter = filter);
                           }
                         },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 14,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            color: isSelected ? primaryBlue : cardColor,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                              color: isSelected
-                                  ? primaryBlue
-                                  : chipBorderUnselected,
-                            ),
-                          ),
-                          child: Text(
-                            filter,
-                            style: TextStyle(
-                              fontSize: 12.5,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                              color: isSelected ? Colors.white : textPrimary,
-                            ),
+                        child: Text(
+                          filter,
+                          style: TextStyle(
+                            fontSize: 12.5,
+                            fontWeight:
+                                isSelected ? FontWeight.w700 : FontWeight.w500,
+                            color: isSelected ? accentBlue : textSecondary,
                           ),
                         ),
                       ),
@@ -404,43 +400,44 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
               ),
               const SizedBox(height: 12),
 
-              // Daftar Kartu Riwayat
+              // Daftar Kartu Riwayat Liquid Glass
               Expanded(
                 child: filteredDocs.isEmpty
                     ? Center(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.history_rounded,
-                                size: 54,
-                                color: isDark
-                                    ? Colors.grey.shade600
-                                    : Colors.grey.shade400,
-                              ),
-                              const SizedBox(height: 12),
-                              Text(
-                                'Belum Ada Riwayat',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 15.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: textPrimary,
+                          padding: const EdgeInsets.fromLTRB(32, 0, 32, 80),
+                          child: LiquidGlassSurface(
+                            borderRadius: 24,
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.history_rounded,
+                                  size: 48,
+                                  color: accentBlue,
                                 ),
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                'Riwayat akan otomatis tercatat saat jadwal perawatan ditandai selesai atau dicatat di detail barang.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: textSecondary,
-                                  height: 1.4,
+                                const SizedBox(height: 12),
+                                Text(
+                                  'Belum Ada Riwayat',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 15.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 80),
-                            ],
+                                const SizedBox(height: 6),
+                                Text(
+                                  'Riwayat akan otomatis tercatat saat jadwal perawatan ditandai selesai atau dicatat di detail barang.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: textSecondary,
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )
@@ -475,23 +472,10 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                           final DateTime completedDate = _extractDate(data);
                           final int costValue = _parseCostToInt(data['cost']);
 
-                          return Container(
+                          return LiquidGlassSurface(
+                            borderRadius: 20,
+                            blurSigma: 14,
                             padding: const EdgeInsets.fromLTRB(14, 12, 14, 14),
-                            decoration: BoxDecoration(
-                              color: cardColor,
-                              borderRadius: BorderRadius.circular(16),
-                              border: Border.all(
-                                color: borderColor,
-                              ),
-                              boxShadow: [
-                                if (!isDark)
-                                  BoxShadow(
-                                    color: Colors.black.withValues(alpha: 0.03),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                              ],
-                            ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -505,7 +489,8 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                         vertical: 5,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: primaryBlue,
+                                        color: primaryBlue
+                                            .withValues(alpha: 0.85),
                                         borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
@@ -525,13 +510,13 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                                 doc.id,
                                                 data,
                                               ),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(10),
                                       child: Padding(
                                         padding: const EdgeInsets.all(4),
                                         child: Icon(
                                           Icons.edit_outlined,
-                                          size: 24,
-                                          color: textPrimary,
+                                          size: 22,
+                                          color: accentBlue,
                                         ),
                                       ),
                                     ),
@@ -569,14 +554,13 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                         vertical: 4,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: isDark
-                                            ? primaryBlue.withValues(alpha: 0.25)
-                                            : const Color(0xFFDBEAFE),
+                                        color: primaryBlue.withValues(
+                                          alpha: isDark ? 0.28 : 0.12,
+                                        ),
                                         borderRadius: BorderRadius.circular(20),
                                         border: Border.all(
-                                          color: isDark
-                                              ? const Color(0xFF60A5FA)
-                                              : const Color(0xFF93C5FD),
+                                          color: accentBlue.withValues(
+                                              alpha: 0.35),
                                         ),
                                       ),
                                       child: Text(
@@ -584,9 +568,7 @@ class _RiwayatScreenState extends State<RiwayatScreen> {
                                         style: TextStyle(
                                           fontSize: 11.5,
                                           fontWeight: FontWeight.w600,
-                                          color: isDark
-                                              ? const Color(0xFF93C5FD)
-                                              : primaryBlue,
+                                          color: accentBlue,
                                         ),
                                       ),
                                     ),

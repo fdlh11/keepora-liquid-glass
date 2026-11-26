@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/jadwal_service.dart';
+import '../utils/liquid_glass_kit.dart';
 import 'detail_jadwal_screen.dart';
 
 class NotifikasiScreen extends StatefulWidget {
@@ -90,25 +91,28 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor = isDark ? const Color(0xFF121212) : Colors.white;
-    final cardColor = isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFAFAFA);
-    final borderColor =
-        isDark ? Colors.grey.shade800 : const Color(0xFFD1D5DB);
-    final textPrimary = isDark ? Colors.white : const Color(0xFF1E1E1E);
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
     final textSecondary =
-        isDark ? Colors.grey.shade400 : const Color(0xFF6B7280);
-    final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
+        isDark ? Colors.white.withValues(alpha: 0.72) : const Color(0xFF475569);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
-        leading: IconButton(
-          onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: textPrimary),
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 12, top: 6, bottom: 6),
+          child: LiquidGlassSurface(
+            borderRadius: 14,
+            blurSigma: 14,
+            padding: const EdgeInsets.all(6),
+            onTap: () => Navigator.pop(context),
+            child: Icon(Icons.arrow_back_rounded, color: textPrimary, size: 20),
+          ),
         ),
         title: Text(
           'Notifikasi Jadwal',
@@ -119,216 +123,223 @@ class _NotifikasiScreenState extends State<NotifikasiScreen> {
           ),
         ),
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _jadwalService.streamJadwalAktif(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting &&
-              !snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(color: primaryBlue),
-            );
-          }
+      body: LiquidGlassBackground(
+        child: SafeArea(
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _jadwalService.streamJadwalAktif(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting &&
+                  !snapshot.hasData) {
+                return const Center(
+                  child: CircularProgressIndicator(color: primaryBlue),
+                );
+              }
 
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(24),
-                child: Text(
-                  'Gagal memuat notifikasi: ${snapshot.error}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(color: Colors.redAccent),
-                ),
-              ),
-            );
-          }
-
-          final docs = [...(snapshot.data?.docs ?? [])]..sort((a, b) {
-              final dataA = a.data() as Map<String, dynamic>? ?? {};
-              final dataB = b.data() as Map<String, dynamic>? ?? {};
-              final tsA = (dataA['scheduledAt'] as Timestamp?)?.toDate() ??
-                  DateTime.now();
-              final tsB = (dataB['scheduledAt'] as Timestamp?)?.toDate() ??
-                  DateTime.now();
-              return tsA.compareTo(tsB);
-            });
-
-          if (docs.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? const Color(0xFF1E3A5F)
-                            : const Color(0xFFDBEAFE),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.notifications_none_rounded,
-                        size: 36,
-                        color: accentBlue,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Belum Ada Pengingat',
-                      style: GoogleFonts.montserrat(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: textPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'Semua jadwal perawatan aktif Anda akan muncul otomatis di sini sebagai pengingat.',
+              if (snapshot.hasError) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(24),
+                    child: Text(
+                      'Gagal memuat notifikasi: ${snapshot.error}',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: textSecondary,
-                        height: 1.4,
+                      style: const TextStyle(color: Colors.redAccent),
+                    ),
+                  ),
+                );
+              }
+
+              final docs = [...(snapshot.data?.docs ?? [])]..sort((a, b) {
+                  final dataA = a.data() as Map<String, dynamic>? ?? {};
+                  final dataB = b.data() as Map<String, dynamic>? ?? {};
+                  final tsA = (dataA['scheduledAt'] as Timestamp?)?.toDate() ??
+                      DateTime.now();
+                  final tsB = (dataB['scheduledAt'] as Timestamp?)?.toDate() ??
+                      DateTime.now();
+                  return tsA.compareTo(tsB);
+                });
+
+              if (docs.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 32),
+                    child: LiquidGlassSurface(
+                      borderRadius: 24,
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: 68,
+                            height: 68,
+                            decoration: BoxDecoration(
+                              color: primaryBlue.withValues(alpha: 0.16),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Icon(
+                              Icons.notifications_none_rounded,
+                              size: 34,
+                              color: accentBlue,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Belum Ada Pengingat',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            'Semua jadwal perawatan aktif Anda akan muncul otomatis di sini sebagai pengingat.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: textSecondary,
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            );
-          }
+                  ),
+                );
+              }
 
-          return ListView.separated(
-            padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
-            itemCount: docs.length,
-            separatorBuilder: (_, __) => const SizedBox(height: 14),
-            itemBuilder: (context, index) {
-              final doc = docs[index];
-              final data = doc.data() as Map<String, dynamic>? ?? {};
-              final title = (data['title'] ?? 'Perawatan Barang').toString();
-              final assetName = (data['assetName'] ?? '-').toString();
-              final type =
-                  (data['maintenanceType'] ?? 'Perawatan').toString();
-              final scheduledAt =
-                  (data['scheduledAt'] as Timestamp?)?.toDate() ??
-                      DateTime.now();
+              return ListView.separated(
+                padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
+                itemCount: docs.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 14),
+                itemBuilder: (context, index) {
+                  final doc = docs[index];
+                  final data = doc.data() as Map<String, dynamic>? ?? {};
+                  final title =
+                      (data['title'] ?? 'Perawatan Barang').toString();
+                  final assetName = (data['assetName'] ?? '-').toString();
+                  final type =
+                      (data['maintenanceType'] ?? 'Perawatan').toString();
+                  final scheduledAt =
+                      (data['scheduledAt'] as Timestamp?)?.toDate() ??
+                          DateTime.now();
 
-              final meta = _getReminderMeta(scheduledAt, type, assetName, isDark);
+                  final meta =
+                      _getReminderMeta(scheduledAt, type, assetName, isDark);
 
-              return InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => DetailJadwalScreen(
-                        scheduleId: doc.id,
-                        data: data,
-                      ),
+                  return LiquidGlassSurface(
+                    borderRadius: 18,
+                    blurSigma: 14,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 13,
+                    ),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailJadwalScreen(
+                            scheduleId: doc.id,
+                            data: data,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: primaryBlue.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Icon(
+                            Icons.notifications_none_rounded,
+                            color: accentBlue,
+                            size: 25,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      title,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.montserrat(
+                                        fontSize: 13.5,
+                                        fontWeight: FontWeight.bold,
+                                        color: textPrimary,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 11,
+                                      vertical: 3.5,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: meta.badgeBg,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Text(
+                                      meta.label,
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w600,
+                                        color: meta.badgeText,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                meta.message,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: textSecondary,
+                                  height: 1.35,
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.access_time_rounded,
+                                    size: 14,
+                                    color: accentBlue,
+                                  ),
+                                  const SizedBox(width: 5),
+                                  Text(
+                                    _formatTanggalJam(scheduledAt),
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: accentBlue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 },
-                borderRadius: BorderRadius.circular(14),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(color: borderColor, width: 1),
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 4),
-                        child: Icon(
-                          Icons.notifications_none_rounded,
-                          color: accentBlue,
-                          size: 32,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    title,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 13.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: textPrimary,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 3.5,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: meta.badgeBg,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Text(
-                                    meta.label,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w600,
-                                      color: meta.badgeText,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              meta.message,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: textSecondary,
-                                height: 1.35,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.access_time_rounded,
-                                  size: 14,
-                                  color: accentBlue,
-                                ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  _formatTanggalJam(scheduledAt),
-                                  style: TextStyle(
-                                    fontSize: 11.5,
-                                    fontWeight: FontWeight.w600,
-                                    color: accentBlue,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
               );
             },
-          );
-        },
+          ),
+        ),
       ),
     );
   }

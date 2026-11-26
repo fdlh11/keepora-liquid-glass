@@ -4,8 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/asset_service.dart';
-import '../utils/top_notif.dart';
 import '../utils/custom_app_dropdown.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
+import '../utils/top_notif.dart';
 
 class EditRiwayatScreen extends StatefulWidget {
   final String assetId;
@@ -141,58 +143,76 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
     }
 
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bool? shouldLeave = await showDialog<bool>(
+    final bool? shouldLeave = await showGeneralDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (dialogContext) => Dialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 24),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Perubahan Belum Disimpan',
-                textAlign: TextAlign.center,
-                style: GoogleFonts.montserrat(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Text(
-                'Anda sedang mengedit riwayat. Data yang sudah diisi akan hilang jika Anda keluar.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 13,
-                  color: isDark ? Colors.white70 : Colors.black87,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
+      barrierLabel: 'Perubahan Belum Disimpan',
+      barrierColor: Colors.black.withValues(alpha: 0.45),
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (dialogContext, _, _) => Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: LiquidGlassSurface(
+              borderRadius: 24,
+              blurSigma: 22,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: ElevatedButton(
-                        onPressed: () => Navigator.pop(dialogContext, false),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF004AAD),
-                          foregroundColor: Colors.white,
-                          elevation: 0,
+                  Text(
+                    'Perubahan Belum Disimpan',
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.montserrat(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : Colors.black,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    'Anda sedang mengedit riwayat. Data yang sudah diisi akan hilang jika Anda keluar.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, false),
+                          height: 44,
+                          borderRadius: 12,
+                          tintColor: const Color(0xFF004AAD),
                           padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                          child: const FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'Lanjutkan Mengisi',
+                              maxLines: 1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
                         ),
-                        child: const FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(
-                            'Lanjutkan Mengisi',
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: LiquidGlassButton(
+                          onPressed: () => Navigator.pop(dialogContext, true),
+                          height: 44,
+                          borderRadius: 12,
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: const Text(
+                            'Keluar',
                             maxLines: 1,
                             textAlign: TextAlign.center,
                             style: TextStyle(
@@ -202,42 +222,11 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
                           ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: SizedBox(
-                      height: 44,
-                      child: OutlinedButton(
-                        onPressed: () => Navigator.pop(dialogContext, true),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isDark
-                              ? const Color(0xFF60A5FA)
-                              : const Color(0xFF004AAD),
-                          side: const BorderSide(
-                            color: Color(0xFF64A1F4),
-                            width: 1.2,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text(
-                          'Keluar',
-                          maxLines: 1,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
                 ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -360,6 +349,17 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
     }
   }
 
+  InputDecoration _glassInputDecoration(String hint) {
+    return InputDecoration(
+      hintText: hint,
+      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13.5),
+      border: InputBorder.none,
+      enabledBorder: InputBorder.none,
+      focusedBorder: InputBorder.none,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -367,14 +367,11 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
     const primaryBlue = Color(0xFF004AAD);
     final assetName = (widget.data['assetName'] ?? '-').toString();
 
-    final bgColor = theme.scaffoldBackgroundColor;
-    final fieldFillColor = isDark ? theme.colorScheme.surface : Colors.white;
     final textPrimary = theme.colorScheme.onSurface;
     final textFieldColor =
         isDark ? Colors.grey.shade200 : Colors.grey.shade800;
     final textSecondary =
         isDark ? Colors.grey.shade400 : Colors.grey.shade600;
-    final borderColor = isDark ? Colors.grey.shade700 : Colors.grey.shade400;
 
     return PopScope(
       canPop: false,
@@ -382,97 +379,99 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
         if (didPop) return;
         await _handleBackPress();
       },
-      child: Scaffold(
-        backgroundColor: bgColor,
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          centerTitle: true,
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: textPrimary),
-            onPressed: _isSaving ? null : _handleBackPress,
-          ),
-          title: Text(
-            'Edit Riwayat Perawatan',
-            style: GoogleFonts.montserrat(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: textPrimary,
+      child: LiquidGlassBackground(
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
+            centerTitle: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: textPrimary),
+              onPressed: _isSaving ? null : _handleBackPress,
+            ),
+            title: Text(
+              'Edit Riwayat Perawatan',
+              style: GoogleFonts.montserrat(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: textPrimary,
+              ),
             ),
           ),
-        ),
-        body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildLabel('Nama Jadwal', textPrimary),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _namaJadwalController,
-                  style: TextStyle(fontSize: 13.5, color: textFieldColor),
-                  decoration: _inputDecoration(
-                    'Masukkan nama jadwal...',
-                    fillColor: fieldFillColor,
-                    borderColor: borderColor,
+          body: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 28),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildLabel('Nama Jadwal', textPrimary),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _namaJadwalController,
+                      style: TextStyle(fontSize: 13.5, color: textFieldColor),
+                      decoration:
+                          _glassInputDecoration('Masukkan nama jadwal...'),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Nama Barang', textPrimary),
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-                  decoration: BoxDecoration(
-                    color: fieldFillColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: borderColor),
+                  const SizedBox(height: 16),
+                  _buildLabel('Nama Barang', textPrimary),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    width: double.infinity,
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    tintColor: Colors.grey,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 14,
+                    ),
+                    child: Text(
+                      assetName,
+                      style: TextStyle(fontSize: 13.5, color: textFieldColor),
+                    ),
                   ),
-                  child: Text(
-                    assetName,
-                    style: TextStyle(fontSize: 13.5, color: textFieldColor),
+                  const SizedBox(height: 16),
+                  _buildLabel('Jenis Perawatan', textPrimary),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: CustomAppDropdown(
+                      value: _selectedJenisPerawatan,
+                      items: _jenisPerawatanOptions,
+                      hint: 'Pilih jenis perawatan',
+                      enabled: !_isSaving,
+                      fillColor: Colors.transparent,
+                      borderColor: Colors.transparent,
+                      textStyle:
+                          TextStyle(fontSize: 13.5, color: textFieldColor),
+                      onChanged: (val) {
+                        setState(() => _selectedJenisPerawatan = val);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Jenis Perawatan', textPrimary),
-                const SizedBox(height: 8),
-                CustomAppDropdown(
-                  value: _selectedJenisPerawatan,
-                  items: _jenisPerawatanOptions,
-                  hint: 'Pilih jenis perawatan',
-                  enabled: !_isSaving,
-                  fillColor: fieldFillColor,
-                  borderColor: borderColor,
-                  textStyle: TextStyle(fontSize: 13.5, color: textFieldColor),
-                  onChanged: (val) {
-                    setState(() => _selectedJenisPerawatan = val);
-                  },
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 6,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Tanggal Perawatan', textPrimary),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: _pilihTanggal,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        flex: 6,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabel('Tanggal Perawatan', textPrimary),
+                            const SizedBox(height: 8),
+                            LiquidGlassSurface(
                               height: 48,
+                              borderRadius: 14,
+                              blurSigma: 14,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: fieldFillColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: borderColor),
-                              ),
+                              onTap: _pilihTanggal,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -494,30 +493,24 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      flex: 4,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildLabel('Jam Perawatan', textPrimary),
-                          const SizedBox(height: 8),
-                          InkWell(
-                            onTap: _pilihJam,
-                            borderRadius: BorderRadius.circular(12),
-                            child: Container(
+                      const SizedBox(width: 12),
+                      Expanded(
+                        flex: 4,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            _buildLabel('Jam Perawatan', textPrimary),
+                            const SizedBox(height: 8),
+                            LiquidGlassSurface(
                               height: 48,
+                              borderRadius: 14,
+                              blurSigma: 14,
                               padding:
                                   const EdgeInsets.symmetric(horizontal: 12),
-                              decoration: BoxDecoration(
-                                color: fieldFillColor,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(color: borderColor),
-                              ),
+                              onTap: _pilihJam,
                               child: Row(
                                 children: [
                                   Expanded(
@@ -539,90 +532,75 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
                                 ],
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Biaya Perawatan', textPrimary),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _biayaController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    _RibuanInputFormatter(),
-                  ],
-                  style: TextStyle(fontSize: 13.5, color: textFieldColor),
-                  decoration: _inputDecoration(
-                    '0',
-                    fillColor: fieldFillColor,
-                    borderColor: borderColor,
-                  ).copyWith(
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.only(left: 14, right: 4),
-                      child: Text(
-                        'Rp',
-                        style: TextStyle(
-                          fontSize: 13.5,
-                          color: textFieldColor,
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Biaya Perawatan', textPrimary),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _biayaController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        _RibuanInputFormatter(),
+                      ],
+                      style: TextStyle(fontSize: 13.5, color: textFieldColor),
+                      decoration: _glassInputDecoration('0').copyWith(
+                        prefixIcon: Padding(
+                          padding: const EdgeInsets.only(left: 14, right: 4),
+                          child: Text(
+                            'Rp',
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              color: textFieldColor,
+                            ),
+                          ),
+                        ),
+                        prefixIconConstraints: const BoxConstraints(
+                          minWidth: 0,
+                          minHeight: 0,
                         ),
                       ),
                     ),
-                    prefixIconConstraints: const BoxConstraints(
-                      minWidth: 0,
-                      minHeight: 0,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildLabel('Catatan Tambahan (Opsional)', textPrimary),
+                  const SizedBox(height: 8),
+                  LiquidGlassSurface(
+                    borderRadius: 14,
+                    blurSigma: 14,
+                    child: TextField(
+                      controller: _catatanController,
+                      maxLines: 3,
+                      style: TextStyle(fontSize: 13.5, color: textFieldColor),
+                      decoration:
+                          _glassInputDecoration('Masukkan catatan tambahan...'),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-                _buildLabel('Catatan Tambahan (Opsional)', textPrimary),
-                const SizedBox(height: 8),
-                TextField(
-                  controller: _catatanController,
-                  maxLines: 3,
-                  style: TextStyle(fontSize: 13.5, color: textFieldColor),
-                  decoration: _inputDecoration(
-                    'Masukkan catatan tambahan...',
-                    fillColor: fieldFillColor,
-                    borderColor: borderColor,
-                  ),
-                ),
-                const SizedBox(height: 44),
-                SizedBox(
-                  width: double.infinity,
-                  height: 52,
-                  child: ElevatedButton(
+                  const SizedBox(height: 44),
+                  LiquidGlassButton(
+                    width: double.infinity,
+                    height: 52,
+                    borderRadius: 16,
+                    tintColor: primaryBlue,
+                    isLoading: _isSaving,
                     onPressed: _isSaving ? null : _simpanPerubahan,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: primaryBlue,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
+                    child: Text(
+                      'Simpan Perubahan',
+                      style: GoogleFonts.montserrat(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
                       ),
-                      elevation: 0,
                     ),
-                    child: _isSaving
-                        ? const SizedBox(
-                            width: 22,
-                            height: 22,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
-                          )
-                        : Text(
-                            'Simpan Perubahan',
-                            style: GoogleFonts.montserrat(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -637,28 +615,6 @@ class _EditRiwayatScreenState extends State<EditRiwayatScreen> {
         fontSize: 13.5,
         fontWeight: FontWeight.bold,
         color: color,
-      ),
-    );
-  }
-
-  InputDecoration _inputDecoration(
-    String hint, {
-    required Color fillColor,
-    required Color borderColor,
-  }) {
-    return InputDecoration(
-      hintText: hint,
-      hintStyle: TextStyle(color: Colors.grey.shade500, fontSize: 13.5),
-      filled: true,
-      fillColor: fillColor,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: borderColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Color(0xFF004AAD), width: 1.4),
       ),
     );
   }

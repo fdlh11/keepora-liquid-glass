@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../services/jadwal_service.dart';
+import '../utils/liquid_glass_button.dart';
+import '../utils/liquid_glass_kit.dart';
 import 'detail_jadwal_screen.dart';
 import 'tambah_jadwal_screen.dart';
 
@@ -22,7 +24,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
   late DateTime _focusedMonth;
   late DateTime _selectedDate;
 
-  // list bulan
   static const List<String> _bulanIndo = [
     '',
     'Januari',
@@ -39,7 +40,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
     'Desember',
   ];
 
-  // list bulan singkat
   static const List<String> _bulanSingkat = [
     '',
     'Jan',
@@ -56,7 +56,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
     'Des',
   ];
 
-  // list nama hari
   static const List<String> _namaHari = [
     'Senin',
     'Selasa',
@@ -112,10 +111,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
     }
   }
 
-  /// Logika warna dinamis berdasarkan kedekatan hari H:
-  /// - <= 10 hari (termasuk hari ini & terlewat): Merah
-  /// - 11 s/d 20 hari: Oranye
-  /// - >= 21 hari: Hijau
   ({Color bg, Color text, Color border}) _getCountdownBadgeStyle(
     DateTime scheduledAt,
     bool isDark,
@@ -128,26 +123,25 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
     if (diffDays <= 3) {
       return (
-        bg: isDark ? const Color(0xFF450A0A) : const Color(0xFFFEE2E2),
+        bg: const Color(0xFFEF4444).withValues(alpha: isDark ? 0.25 : 0.14),
         text: isDark ? const Color(0xFFFCA5A5) : const Color(0xFFDC2626),
-        border: isDark ? const Color(0xFF991B1B) : const Color(0xFFFCA5A5),
+        border: const Color(0xFFEF4444).withValues(alpha: 0.45),
       );
     } else if (diffDays <= 15) {
       return (
-        bg: isDark ? const Color(0xFF452700) : const Color(0xFFFEF3C7),
+        bg: const Color(0xFFF59E0B).withValues(alpha: isDark ? 0.25 : 0.16),
         text: isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706),
-        border: isDark ? const Color(0xFFD97706) : const Color(0xFFFBBF24),
+        border: const Color(0xFFF59E0B).withValues(alpha: 0.45),
       );
     } else {
       return (
-        bg: isDark ? const Color(0xFF052E16) : const Color(0xFFDCFCE7),
+        bg: const Color(0xFF10B981).withValues(alpha: isDark ? 0.25 : 0.14),
         text: isDark ? const Color(0xFF86EFAC) : const Color(0xFF15803D),
-        border: isDark ? const Color(0xFF166534) : const Color(0xFF86EFAC),
+        border: const Color(0xFF10B981).withValues(alpha: 0.45),
       );
     }
   }
 
-  // Menghasilkan daftar minggu dalam 1 bulan dengan jumlah genap (kelipatan 2 minggu)
   List<List<DateTime>> _getMonthWeeks() {
     final firstDayOfMonth = DateTime(_focusedMonth.year, _focusedMonth.month, 1);
     final lastDayOfMonth =
@@ -252,17 +246,39 @@ class _JadwalScreenState extends State<JadwalScreen> {
                 margin: const EdgeInsets.symmetric(vertical: 2),
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: hasSchedule ? primaryBlue : Colors.transparent,
+                  gradient: hasSchedule
+                      ? LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: isDark
+                              ? [
+                                  const Color(0xFF3B82F6),
+                                  primaryBlue,
+                                ]
+                              : [
+                                  const Color(0xFF2563EB),
+                                  primaryBlue,
+                                ],
+                        )
+                      : null,
+                  boxShadow: hasSchedule
+                      ? [
+                          BoxShadow(
+                            color: primaryBlue.withValues(alpha: 0.35),
+                            blurRadius: 6,
+                          ),
+                        ]
+                      : null,
                   border: isToday && !hasSchedule
                       ? Border.all(
                           color: accentBlue,
-                          width: 1.4,
+                          width: 1.5,
                         )
                       : (isSelected && !hasSchedule
                           ? Border.all(
                               color: isDark
-                                  ? Colors.grey.shade600
-                                  : Colors.grey.shade400,
+                                  ? Colors.white.withValues(alpha: 0.4)
+                                  : primaryBlue.withValues(alpha: 0.35),
                               width: 1.2,
                             )
                           : null),
@@ -280,8 +296,8 @@ class _JadwalScreenState extends State<JadwalScreen> {
                         : (isCurrentMonth
                             ? textPrimary
                             : (isDark
-                                ? Colors.grey.shade700
-                                : Colors.grey.shade400)),
+                                ? Colors.white.withValues(alpha: 0.25)
+                                : const Color(0xFF94A3B8))),
                   ),
                 ),
               ),
@@ -296,15 +312,13 @@ class _JadwalScreenState extends State<JadwalScreen> {
   Widget build(BuildContext context) {
     const primaryBlue = Color(0xFF004AAD);
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final bgColor =
-        isDark ? const Color(0xFF121212) : const Color(0xFFF3F4F6);
-    final surfaceColor = isDark ? const Color(0xFF1E1E1E) : Colors.white;
-    final borderColor =
-        isDark ? Colors.grey.shade800 : Colors.grey.shade200;
-    final textPrimary = isDark ? Colors.white : Colors.black87;
+    final textPrimary = isDark ? Colors.white : const Color(0xFF0F172A);
     final textSecondary =
-        isDark ? Colors.grey.shade400 : Colors.grey.shade600;
-    final accentBlue = isDark ? const Color(0xFF60A5FA) : primaryBlue;
+        isDark ? Colors.white.withValues(alpha: 0.72) : const Color(0xFF475569);
+    final accentBlue = isDark ? const Color(0xFF93C5FD) : primaryBlue;
+    final dividerColor = isDark
+        ? Colors.white.withValues(alpha: 0.14)
+        : primaryBlue.withValues(alpha: 0.14);
 
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -312,9 +326,9 @@ class _JadwalScreenState extends State<JadwalScreen> {
     final twoWeekPageCount = monthWeeks.length ~/ 2;
 
     return Scaffold(
-      backgroundColor: bgColor,
+      backgroundColor: Colors.transparent,
       appBar: AppBar(
-        backgroundColor: bgColor,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: true,
@@ -374,22 +388,12 @@ class _JadwalScreenState extends State<JadwalScreen> {
 
           return Column(
             children: [
-              Container(
+              // Kalender Liquid Glass
+              LiquidGlassSurface(
                 margin: const EdgeInsets.fromLTRB(16, 4, 16, 14),
                 padding: const EdgeInsets.fromLTRB(14, 12, 14, 12),
-                decoration: BoxDecoration(
-                  color: surfaceColor,
-                  borderRadius: BorderRadius.circular(18),
-                  border: Border.all(color: borderColor),
-                  boxShadow: [
-                    BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.25 : 0.03),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
+                borderRadius: 22,
+                blurSigma: 18,
                 child: Column(
                   children: [
                     Row(
@@ -397,7 +401,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                       children: [
                         InkWell(
                           onTap: () => _gantiBulan(-1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.all(4),
                             child: Icon(
@@ -417,7 +421,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                         ),
                         InkWell(
                           onTap: () => _gantiBulan(1),
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: BorderRadius.circular(10),
                           child: Padding(
                             padding: const EdgeInsets.all(4),
                             child: Icon(
@@ -430,7 +434,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
                       ],
                     ),
                     const SizedBox(height: 12),
-
                     Row(
                       children: _namaHari
                           .map(
@@ -440,7 +443,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                                   hari,
                                   style: TextStyle(
                                     fontSize: 11,
-                                    fontWeight: FontWeight.w500,
+                                    fontWeight: FontWeight.w600,
                                     color: textSecondary,
                                   ),
                                 ),
@@ -450,8 +453,6 @@ class _JadwalScreenState extends State<JadwalScreen> {
                           .toList(),
                     ),
                     const SizedBox(height: 8),
-
-                    // Scroll vertikal setiap 2 minggu
                     SizedBox(
                       height: _weekRowHeight * 2,
                       child: PageView.builder(
@@ -487,11 +488,9 @@ class _JadwalScreenState extends State<JadwalScreen> {
                         },
                       ),
                     ),
-
                     const SizedBox(height: 8),
-                    Divider(height: 1, color: borderColor),
+                    Divider(height: 1, color: dividerColor),
                     const SizedBox(height: 8),
-
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -542,7 +541,7 @@ class _JadwalScreenState extends State<JadwalScreen> {
                         color: textPrimary,
                       ),
                     ),
-                    ElevatedButton.icon(
+                    LiquidGlassButton(
                       onPressed: () {
                         Navigator.push(
                           context,
@@ -551,27 +550,26 @@ class _JadwalScreenState extends State<JadwalScreen> {
                           ),
                         );
                       },
-                      icon: const Icon(Icons.add, size: 18),
-                      label: Text(
-                        'Jadwal',
-                        style: GoogleFonts.montserrat(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                        ),
+                      tintColor: primaryBlue,
+                      foregroundColor: isDark ? Colors.white : primaryBlue,
+                      borderRadius: 20,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 8,
                       ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: primaryBlue,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 8,
-                        ),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.add_rounded, size: 18),
+                          const SizedBox(width: 4),
+                          Text(
+                            'Jadwal',
+                            style: GoogleFonts.montserrat(
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
@@ -582,35 +580,38 @@ class _JadwalScreenState extends State<JadwalScreen> {
                 child: docs.isEmpty
                     ? Center(
                         child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 32),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.event_note_outlined,
-                                size: 56,
-                                color: Colors.grey.shade500,
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                'Belum Ada Jadwal Perawatan',
-                                style: GoogleFonts.montserrat(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color: textPrimary,
+                          padding: const EdgeInsets.fromLTRB(32, 0, 32, 70),
+                          child: LiquidGlassSurface(
+                            borderRadius: 24,
+                            padding: const EdgeInsets.all(24),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  Icons.event_note_outlined,
+                                  size: 48,
+                                  color: accentBlue,
                                 ),
-                              ),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Tekan tombol + Jadwal di atas untuk menambahkan pengingat perawatan.',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 12.5,
-                                  color: textSecondary,
+                                const SizedBox(height: 10),
+                                Text(
+                                  'Belum Ada Jadwal Perawatan',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 60),
-                            ],
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tekan tombol + Jadwal di atas untuk menambahkan pengingat perawatan.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12.5,
+                                    color: textSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       )
@@ -630,7 +631,10 @@ class _JadwalScreenState extends State<JadwalScreen> {
                           final badgeStyle =
                               _getCountdownBadgeStyle(scheduledAt, isDark);
 
-                          return InkWell(
+                          return LiquidGlassSurface(
+                            borderRadius: 20,
+                            blurSigma: 14,
+                            padding: const EdgeInsets.all(14),
                             onTap: () {
                               Navigator.push(
                                 context,
@@ -642,120 +646,102 @@ class _JadwalScreenState extends State<JadwalScreen> {
                                 ),
                               );
                             },
-                            borderRadius: BorderRadius.circular(16),
-                            child: Container(
-                              padding: const EdgeInsets.all(14),
-                              decoration: BoxDecoration(
-                                color: surfaceColor,
-                                borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: borderColor),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withValues(
-                                        alpha: isDark ? 0.2 : 0.03),
-                                    blurRadius: 8,
-                                    offset: const Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: primaryBlue,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Text(
-                                          _formatBadgeTanggal(scheduledAt),
-                                          style: const TextStyle(
-                                            fontSize: 11.5,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.white,
-                                          ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: primaryBlue
+                                            .withValues(alpha: 0.85),
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: Text(
+                                        _formatBadgeTanggal(scheduledAt),
+                                        style: const TextStyle(
+                                          fontSize: 11.5,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: 4,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: badgeStyle.bg,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          border: Border.all(
-                                            color: badgeStyle.border,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          _formatCountdownDanJam(scheduledAt),
-                                          style: TextStyle(
-                                            fontSize: 11,
-                                            fontWeight: FontWeight.w600,
-                                            color: badgeStyle.text,
-                                          ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: badgeStyle.bg,
+                                        borderRadius: BorderRadius.circular(20),
+                                        border: Border.all(
+                                          color: badgeStyle.border,
                                         ),
                                       ),
-                                    ],
+                                      child: Text(
+                                        _formatCountdownDanJam(scheduledAt),
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          fontWeight: FontWeight.w600,
+                                          color: badgeStyle.text,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10),
+                                Text(
+                                  (data['title'] ?? '-').toString(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 15.5,
+                                    fontWeight: FontWeight.bold,
+                                    color: textPrimary,
                                   ),
-                                  const SizedBox(height: 10),
-
-                                  Text(
-                                    (data['title'] ?? '-').toString(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.montserrat(
-                                      fontSize: 15.5,
-                                      fontWeight: FontWeight.bold,
-                                      color: textPrimary,
+                                ),
+                                const SizedBox(height: 3),
+                                Text(
+                                  (data['assetName'] ?? '-').toString(),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: textSecondary,
+                                  ),
+                                ),
+                                const SizedBox(height: 10),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 4,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: primaryBlue.withValues(
+                                      alpha: isDark ? 0.28 : 0.12,
+                                    ),
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: accentBlue.withValues(alpha: 0.35),
                                     ),
                                   ),
-                                  const SizedBox(height: 3),
-
-                                  Text(
-                                    (data['assetName'] ?? '-').toString(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Text(
+                                    (data['maintenanceType'] ?? 'Perawatan')
+                                        .toString(),
                                     style: TextStyle(
-                                      fontSize: 13,
-                                      color: textSecondary,
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w600,
+                                      color: accentBlue,
                                     ),
                                   ),
-                                  const SizedBox(height: 10),
-
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: isDark
-                                          ? const Color(0xFF172554)
-                                          : const Color(0xFFDBEAFE),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Text(
-                                      (data['maintenanceType'] ?? 'Perawatan')
-                                          .toString(),
-                                      style: TextStyle(
-                                        fontSize: 11.5,
-                                        fontWeight: FontWeight.w600,
-                                        color: accentBlue,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           );
                         },
