@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "43620899906",
+    "project_id": "keepora-0r4",
+    "storage_bucket": "keepora-0r4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43620899906:android:102c4e3585b54cb50361db",
+        "android_client_info": {
+          "package_name": "com.example.keepora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCOB1tjWXzE5_FyLjDObogwts6i3oBHkhY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
